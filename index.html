@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="dashboard">
+    <div class="menu-squares">
+      <div class="menu-square" id="shifts-square">
+        <span>Shifts</span>
+      </div>
+      <div class="menu-square" id="announcements-square">
+        <span>Announcements</span>
+      </div>
+    </div>
+    <div class="details-section hidden" id="shifts-details">
+      <h2>Shifts</h2>
+      <div class="shift-squares">
+        <div class="shift-square" data-profile="john">
+          <span>John Doe</span>
+        </div>
+        <div class="shift-square" data-profile="jane">
+          <span>Jane Doe</span>
+        </div>
+        <div class="shift-square" data-profile="bob">
+          <span>Bob Smith</span>
+        </div>
+      </div>
+      <div class="profile-details" id="profile-details">
+        <h3>Click a profile to see shift details</h3>
+      </div>
+    </div>
+    <div class="details-section hidden" id="announcements-details">
+      <h2>Announcements</h2>
+      <ul class="announcements-list">
+        <li>Team lunch on Friday at 1pm in the main cafeteria.</li>
+        <li>Reminder: Submit weekly reports by Thursday 5pm.</li>
+        <li>Fire drill scheduled for next Monday at 10am.</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    // Menu square click handling
+    const shiftsSquare = document.getElementById('shifts-square');
+    const announcementsSquare = document.getElementById('announcements-square');
+    const shiftsDetails = document.getElementById('shifts-details');
+    const announcementsDetails = document.getElementById('announcements-details');
+
+    shiftsSquare.addEventListener('click', () => {
+      shiftsDetails.classList.remove('hidden');
+      announcementsDetails.classList.add('hidden');
+      shiftsSquare.classList.add('selected');
+      announcementsSquare.classList.remove('selected');
+    });
+
+    announcementsSquare.addEventListener('click', () => {
+      announcementsDetails.classList.remove('hidden');
+      shiftsDetails.classList.add('hidden');
+      announcementsSquare.classList.add('selected');
+      shiftsSquare.classList.remove('selected');
+    });
+
+    // Shift profiles details
+    const profileDetails = document.getElementById('profile-details');
+    const profiles = {
+      john: {
+        name: "John Doe",
+        shift: "9:00 AM - 5:00 PM",
+        tasks: [
+          "Front desk coverage from 9am-12pm",
+          "Inventory check at 2pm",
+          "Daily report submission by 4:30pm",
+          "Assist with onboarding new employees"
+        ]
+      },
+      jane: {
+        name: "Jane Doe",
+        shift: "1:00 PM - 9:00 PM",
+        tasks: [
+          "Supervise afternoon crew",
+          "Prepare conference room for meetings",
+          "Coordinate with cleaning staff",
+          "Update task board at end of shift"
+        ]
+      },
+      bob: {
+        name: "Bob Smith",
+        shift: "6:00 AM - 2:00 PM",
+        tasks: [
+          "Early morning inventory restock",
+          "Equipment maintenance at 9am",
+          "Handle supplier deliveries",
+          "Submit maintenance logs by 1:30pm"
+        ]
+      }
+    };
+
+    document.querySelectorAll('.shift-square').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const profile = profiles[btn.dataset.profile];
+        profileDetails.innerHTML = `
+          <h3>${profile.name}</h3>
+          <p><strong>Shift:</strong> ${profile.shift}</p>
+          <ul>
+            ${profile.tasks.map(task => `<li>${task}</li>`).join('')}
+          </ul>
+        `;
+        // Highlight selected shift
+        document.querySelectorAll('.shift-square').forEach(sq => sq.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>
