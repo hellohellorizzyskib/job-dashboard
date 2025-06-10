@@ -6,27 +6,91 @@
   <title>Job Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    .hidden { display:none; }
+    .menu-squares { display:flex; flex-wrap:wrap; gap:20px; margin-bottom:30px; }
+    .menu-square { width:160px; height:160px; display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:bold;border-radius:18px;cursor:pointer;user-select:none;box-shadow:0 2px 8px #8883;}
+    .orange-gradient{background: radial-gradient(circle at 65% 35%, #fff 60px, #ffb347 110px, #ff9800 100%);}
+    .blue-gradient{background: radial-gradient(circle at 60% 30%, #fff 60px, #71c7ec 110px, #2792c3 100%);}
+    .green-gradient{background: radial-gradient(circle at 40% 30%, #fff 60px, #8de7b5 110px, #1eae60 100%);}
+    .purple-gradient{background: radial-gradient(circle at 65% 35%, #fff 60px, #c3a3fc 110px, #7e46c5 100%);}
+    .calendar-gradient{background: radial-gradient(circle at 50% 40%, #fff 60px, #ffe082 110px, #ffca28 100%);}
+    .profile-gradient{background: radial-gradient(circle at 30% 70%, #fff 60px, #b3f6ea 110px, #00bfae 100%);}
+    .details-section { background:#fff; border-radius:14px; padding:30px 22px 22px 22px; box-shadow:0 2px 18px #8882; margin-bottom:24px; max-width:900px; width:100%;}
+    label { display:block; margin-bottom:10px; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="color"], input[type="time"], select, textarea {
+      display:block; width:100%; max-width:350px; margin-top:3px; margin-bottom:7px; padding:7px; border-radius:5px; border:1px solid #ccc;}
+    textarea { min-height:40px;}
+    button { margin-top:5px; padding:7px 14px; border-radius:7px; border:none; background:#1976d2; color:#fff; font-weight:600; cursor:pointer;}
+    .admin-section { margin-bottom:32px; }
+    .admin-worker-block, .admin-cal-event, .submission-block { background:#f6f9fa; border-radius:7px; margin-bottom:10px; padding:8px 14px; }
+    .admin-cal-event { border-left:7px solid #ffb347; }
+    .admin-worker-block { border-left:7px solid #1eae60; }
+    .shift-buttons { display:flex; gap:9px; margin:7px 0; }
+    .profile-header { display:flex; align-items:center; gap:22px; margin-bottom:10px;}
+    .profile-header h3 { margin:0; font-size:1.24rem; font-family:'Montserrat', Arial, sans-serif; color:#04786f;}
+    .profile-logout-btn { background:#b3f6ea; color:#04786f; border:none; border-radius:6px; font-size:0.98rem; font-family:'Montserrat', Arial, sans-serif; font-weight:700; padding:8px 15px; cursor:pointer; margin-left:auto;}
+    .profile-history-scroll { max-height:180px; overflow-y:auto; border-radius:10px; background:#f6f9fa; box-shadow:0 1px 8px 0 rgba(80,90,110,0.07); padding:15px 12px; margin-top:8px;}
+    .shift-history-block { margin-bottom:12px; background:#e6fefb; padding:11px 12px 7px 12px; border-radius:7px;}
+    .shift-history-block ul { margin:3px 0 0 0; padding-left:18px; font-size:0.98rem;}
+    .shift-history-block li { margin-bottom:2px;}
+  </style>
 </head>
 <body>
   <div class="dashboard">
     <div class="menu-squares">
-      <div class="menu-square orange-gradient" id="shifts-square">
-        <span>Shifts</span>
+      <div class="menu-square orange-gradient" id="shifts-square"><span>Shifts</span></div>
+      <div class="menu-square blue-gradient" id="announcements-square"><span>Announcements</span></div>
+      <div class="menu-square green-gradient" id="hire-square"><span>Apply for Hire</span></div>
+      <div class="menu-square purple-gradient" id="admin-square"><span>Admin</span></div>
+      <div class="menu-square calendar-gradient" id="calendar-square"><span>Calendar</span></div>
+      <div class="menu-square profile-gradient" id="profile-square"><span>Manage Your Profile</span></div>
+    </div>
+    <!-- Profile Section -->
+    <div class="details-section hidden" id="profile-details-section">
+      <h2>Manage Your Profile</h2>
+      <div id="profile-login-section">
+        <form id="profile-login-form" class="profile-login-form">
+          <label>
+            Username:
+            <input type="text" id="profile-login-username" maxlength="24" required autocomplete="username">
+          </label>
+          <label>
+            Password:
+            <input type="password" id="profile-login-password" maxlength="32" required autocomplete="current-password">
+          </label>
+          <button type="submit">Login</button>
+          <div class="form-message" id="profile-login-message"></div>
+        </form>
       </div>
-      <div class="menu-square blue-gradient" id="announcements-square">
-        <span>Announcements</span>
-      </div>
-      <div class="menu-square green-gradient" id="hire-square">
-        <span>Apply for Hire</span>
-      </div>
-      <div class="menu-square purple-gradient" id="admin-square">
-        <span>Admin</span>
-      </div>
-      <div class="menu-square calendar-gradient" id="calendar-square">
-        <span>Calendar</span>
+      <div id="profile-main-section" class="hidden">
+        <div class="profile-header">
+          <h3 id="profile-name"></h3>
+          <button id="profile-logout-btn" class="profile-logout-btn">Logout</button>
+        </div>
+        <div class="profile-info">
+          <div><b>Current Schedule:</b> <span id="profile-schedule"></span></div>
+          <div><b>Lunch Break:</b> <span id="profile-lunch"></span></div>
+          <div><b>Past Jobs:</b>
+            <ul id="profile-history-list"></ul>
+          </div>
+        </div>
+        <div id="shift-control-block">
+          <div><b>Today's Shift:</b> <span id="profile-current-shift"></span></div>
+          <div class="shift-buttons">
+            <button id="clock-in-btn">Clock In</button>
+            <button id="start-break-btn" disabled>Start Lunch Break</button>
+            <button id="end-break-btn" disabled>End Lunch Break</button>
+            <button id="clock-out-btn" disabled>Clock Out</button>
+          </div>
+          <div id="shift-status"></div>
+        </div>
+        <div>
+          <h4>Shift History</h4>
+          <div class="profile-history-scroll" id="profile-shift-history"></div>
+        </div>
       </div>
     </div>
-
     <!-- Calendar Section -->
     <div class="details-section hidden" id="calendar-details">
       <h2>Weekly Calendar</h2>
@@ -40,7 +104,6 @@
         <div class="calendar-grid" id="calendar-grid"></div>
       </div>
     </div>
-
     <!-- Shifts Section -->
     <div class="details-section hidden" id="shifts-details">
       <h2>Shifts</h2>
@@ -49,51 +112,24 @@
         <h3>Click a profile to see shift details</h3>
       </div>
     </div>
-
     <!-- Announcements Section -->
     <div class="details-section hidden" id="announcements-details">
       <h2>Announcements</h2>
       <ul class="announcements-list" id="announcements-list"></ul>
     </div>
-
     <!-- Hire Section -->
     <div class="details-section hidden" id="hire-details">
       <h2>Apply for Hire</h2>
       <form class="hire-form" id="hire-form">
-        <label>
-          1. Full Name:
-          <input type="text" name="name" required autocomplete="name">
-        </label>
-        <label>
-          2. Email Address:
-          <input type="email" name="email" required autocomplete="email">
-        </label>
-        <label>
-          3. Phone Number:
-          <input type="text" name="phone" required autocomplete="tel">
-        </label>
-        <label>
-          4. Why do you want this job?
-          <textarea name="why" rows="2" required></textarea>
-        </label>
-        <label>
-          5. What relevant experience do you have?
-          <textarea name="experience" rows="2" required></textarea>
-        </label>
-        <label>
-          6. What are your strengths?
-          <textarea name="strengths" rows="2" required></textarea>
-        </label>
-        <label>
-          7. What are your weaknesses?
-          <textarea name="weaknesses" rows="2" required></textarea>
-        </label>
-        <label>
-          8. What is your availability (days and times)?
-          <input type="text" name="availability" required>
-        </label>
-        <label>
-          9. Which shift would you prefer?
+        <label>1. Full Name:<input type="text" name="name" required autocomplete="name"></label>
+        <label>2. Email Address:<input type="email" name="email" required autocomplete="email"></label>
+        <label>3. Phone Number:<input type="text" name="phone" required autocomplete="tel"></label>
+        <label>4. Why do you want this job?<textarea name="why" rows="2" required></textarea></label>
+        <label>5. What relevant experience do you have?<textarea name="experience" rows="2" required></textarea></label>
+        <label>6. What are your strengths?<textarea name="strengths" rows="2" required></textarea></label>
+        <label>7. What are your weaknesses?<textarea name="weaknesses" rows="2" required></textarea></label>
+        <label>8. What is your availability (days and times)?<input type="text" name="availability" required></label>
+        <label>9. Which shift would you prefer?
           <select name="shift" required>
             <option value="">Select...</option>
             <option>Morning (6am-2pm)</option>
@@ -101,8 +137,7 @@
             <option>Evening (1pm-9pm)</option>
           </select>
         </label>
-        <label>
-          10. Are you willing to work weekends?
+        <label>10. Are you willing to work weekends?
           <select name="weekends" required>
             <option value="">Select...</option>
             <option value="yes">Yes</option>
@@ -110,19 +145,12 @@
             <option value="maybe">Maybe</option>
           </select>
         </label>
-        <label>
-          11. Tell us about a time you overcame a challenge:
-          <textarea name="challenge" rows="2" required></textarea>
-        </label>
-        <label>
-          12. Emergency Contact Name & Number:
-          <input type="text" name="emergency" required>
-        </label>
+        <label>11. Tell us about a time you overcame a challenge:<textarea name="challenge" rows="2" required></textarea></label>
+        <label>12. Emergency Contact Name & Number:<input type="text" name="emergency" required></label>
         <button type="submit">Submit Application</button>
         <div class="form-message" id="form-message"></div>
       </form>
     </div>
-
     <!-- Admin Section -->
     <div class="details-section hidden" id="admin-details">
       <h2>Admin Access</h2>
@@ -143,6 +171,10 @@
           </label>
           <button id="change-admin-code-btn">Change Code</button>
           <div id="admin-code-message" style="margin-top:8px;"></div>
+        </div>
+        <div class="admin-section">
+          <h3>Change Profile Passwords</h3>
+          <div id="admin-profile-passwords"></div>
         </div>
         <div class="admin-section">
           <h3>Manage Workers</h3>
@@ -200,611 +232,791 @@
     </div>
   </div>
   <script>
-    // ============ Dashboard State and LocalStorage =============
-    // Workers
-    const defaultWorkers = [
-      {
-        name: "John Doe",
-        shift: "9:00 AM - 5:00 PM",
-        tasks: [
-          "Front desk coverage from 9am-12pm",
-          "Inventory check at 2pm",
-          "Daily report submission by 4:30pm",
-          "Assist with onboarding new employees"
-        ]
-      },
-      {
-        name: "Jane Doe",
-        shift: "1:00 PM - 9:00 PM",
-        tasks: [
-          "Supervise afternoon crew",
-          "Prepare conference room for meetings",
-          "Coordinate with cleaning staff",
-          "Update task board at end of shift"
-        ]
-      },
-      {
-        name: "Bob Smith",
-        shift: "6:00 AM - 2:00 PM",
-        tasks: [
-          "Early morning inventory restock",
-          "Equipment maintenance at 9am",
-          "Handle supplier deliveries",
-          "Submit maintenance logs by 1:30pm"
-        ]
-      }
-    ];
-    function getWorkers() {
-      return JSON.parse(localStorage.getItem('workers') || JSON.stringify(defaultWorkers));
-    }
-    function setWorkers(workers) {
-      localStorage.setItem('workers', JSON.stringify(workers));
-    }
+// Workers
+const defaultWorkers = [
+  {
+    name: "John Doe",
+    shift: "9:00 AM - 5:00 PM",
+    tasks: [
+      "Front desk coverage from 9am-12pm",
+      "Inventory check at 2pm",
+      "Daily report submission by 4:30pm",
+      "Assist with onboarding new employees"
+    ]
+  },
+  {
+    name: "Jane Doe",
+    shift: "1:00 PM - 9:00 PM",
+    tasks: [
+      "Supervise afternoon crew",
+      "Prepare conference room for meetings",
+      "Coordinate with cleaning staff",
+      "Update task board at end of shift"
+    ]
+  },
+  {
+    name: "Bob Smith",
+    shift: "6:00 AM - 2:00 PM",
+    tasks: [
+      "Early morning inventory restock",
+      "Equipment maintenance at 9am",
+      "Handle supplier deliveries",
+      "Submit maintenance logs by 1:30pm"
+    ]
+  }
+];
+function getWorkers() {
+  return JSON.parse(localStorage.getItem('workers') || JSON.stringify(defaultWorkers));
+}
+function setWorkers(workers) {
+  localStorage.setItem('workers', JSON.stringify(workers));
+}
 
-    // Announcements
-    const defaultAnnouncements = [
-      "Team lunch on Friday at 1pm in the main cafeteria.",
-      "Reminder: Submit weekly reports by Thursday 5pm.",
-      "Fire drill scheduled for next Monday at 10am."
-    ];
-    function getAnnouncements() {
-      return JSON.parse(localStorage.getItem('announcements') || JSON.stringify(defaultAnnouncements));
-    }
-    function setAnnouncements(list) {
-      localStorage.setItem('announcements', JSON.stringify(list));
-    }
+// Announcements
+const defaultAnnouncements = [
+  "Team lunch on Friday at 1pm in the main cafeteria.",
+  "Reminder: Submit weekly reports by Thursday 5pm.",
+  "Fire drill scheduled for next Monday at 10am."
+];
+function getAnnouncements() {
+  return JSON.parse(localStorage.getItem('announcements') || JSON.stringify(defaultAnnouncements));
+}
+function setAnnouncements(list) {
+  localStorage.setItem('announcements', JSON.stringify(list));
+}
 
-    // Admin code
-    function getAdminCode() {
-      return localStorage.getItem('adminCode') || "1234";
-    }
-    function setAdminCode(newCode) {
-      localStorage.setItem('adminCode', newCode);
-    }
+// Admin code
+function getAdminCode() {
+  return localStorage.getItem('adminCode') || "1234";
+}
+function setAdminCode(newCode) {
+  localStorage.setItem('adminCode', newCode);
+}
 
-    // Submissions
-    function getSubmissions() {
-      return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
-    }
-    function setSubmissions(subs) {
-      localStorage.setItem('hireSubmissions', JSON.stringify(subs));
-    }
-    function saveSubmission(data) {
-      const subs = getSubmissions();
-      subs.push(data);
-      setSubmissions(subs);
-    }
+// Submissions
+function getSubmissions() {
+  return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
+}
+function setSubmissions(subs) {
+  localStorage.setItem('hireSubmissions', JSON.stringify(subs));
+}
+function saveSubmission(data) {
+  const subs = getSubmissions();
+  subs.push(data);
+  setSubmissions(subs);
+}
 
-    // Calendar events
-    const defaultCalendarEvents = [
-      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
-      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
-      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
-      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
-      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
-      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
-    ];
-    function getCalendarEvents() {
-      return JSON.parse(localStorage.getItem('calendarEvents') || JSON.stringify(defaultCalendarEvents));
-    }
-    function setCalendarEvents(events) {
-      localStorage.setItem('calendarEvents', JSON.stringify(events));
-    }
+// Calendar events
+const defaultCalendarEvents = [
+  { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
+  { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
+  { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
+  { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
+  { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
+  { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
+];
+function getCalendarEvents() {
+  return JSON.parse(localStorage.getItem('calendarEvents') || JSON.stringify(defaultCalendarEvents));
+}
+function setCalendarEvents(events) {
+  localStorage.setItem('calendarEvents', JSON.stringify(events));
+}
 
-    // ============ Shifts Section ============
-    function renderShiftSquares() {
+// ====== SHIFTS SECTION ======
+function renderShiftSquares() {
+  const workers = getWorkers();
+  const shiftSquares = document.getElementById('shift-squares');
+  shiftSquares.innerHTML = '';
+  workers.forEach((worker, idx) => {
+    const colors = ['orange-gradient', 'blue-gradient', 'green-gradient', 'purple-gradient'];
+    const color = colors[idx % colors.length];
+    const div = document.createElement('div');
+    div.className = `shift-square ${color}`;
+    div.innerHTML = `<span>${worker.name}</span>`;
+    div.addEventListener('click', () => {
+      renderProfileDetails(worker);
+    });
+    shiftSquares.appendChild(div);
+  });
+}
+function renderProfileDetails(worker) {
+  const profileDetails = document.getElementById('profile-details');
+  profileDetails.innerHTML = `
+    <h3>${worker.name}</h3>
+    <p><strong>Shift:</strong> ${worker.shift}</p>
+    <ul>
+      ${worker.tasks.map(task => `<li>${task}</li>`).join('')}
+    </ul>
+  `;
+}
+
+// ====== ANNOUNCEMENTS SECTION ======
+function renderAnnouncements() {
+  const list = getAnnouncements();
+  const annList = document.getElementById('announcements-list');
+  annList.innerHTML = '';
+  list.forEach(a => {
+    const li = document.createElement('li');
+    li.textContent = a;
+    annList.appendChild(li);
+  });
+}
+
+// ====== ADMIN ANNOUNCEMENTS ======
+function renderAdminAnnouncements() {
+  const list = getAnnouncements();
+  const annList = document.getElementById('admin-announcements-list');
+  annList.innerHTML = '';
+  list.forEach((a, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="admin-announcement-text" contenteditable="true" data-idx="${i}">${a}</span>
+      <button class="delete-announcement-btn" data-idx="${i}">Delete</button>
+    `;
+    annList.appendChild(li);
+  });
+}
+
+// ====== ADMIN WORKERS ======
+function renderAdminWorkers() {
+  const workers = getWorkers();
+  const div = document.getElementById('admin-workers-list');
+  div.innerHTML = '';
+  workers.forEach((worker, idx) => {
+    const workerDiv = document.createElement('div');
+    workerDiv.className = "admin-worker-block";
+    workerDiv.innerHTML = `
+      <b>${worker.name}</b> (<span>${worker.shift}</span>)
+      <button class="edit-worker-btn" data-idx="${idx}">Edit</button>
+      <button class="delete-worker-btn" data-idx="${idx}">Delete</button>
+      <div class="admin-worker-tasks"><ul>${worker.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      <div class="edit-worker-form hidden" id="edit-worker-form-${idx}">
+        <label>Name: <input type="text" value="${worker.name}" class="edit-worker-name"></label>
+        <label>Shift: <input type="text" value="${worker.shift}" class="edit-worker-shift"></label>
+        <label>Tasks (comma separated): <input type="text" value="${worker.tasks.join(', ')}" class="edit-worker-tasks-input"></label>
+        <button class="save-edit-worker-btn" data-idx="${idx}">Save</button>
+        <button class="cancel-edit-worker-btn" data-idx="${idx}">Cancel</button>
+      </div>
+    `;
+    div.appendChild(workerDiv);
+  });
+}
+
+// ====== ADMIN SUBMISSIONS ======
+function renderAdminSubmissions() {
+  const subs = getSubmissions();
+  const list = document.getElementById('submissions-list');
+  if(subs.length === 0) {
+    list.innerHTML = "<em>No submissions yet.</em>";
+    return;
+  }
+  list.innerHTML = subs.map((s, i) => `
+    <div class="submission-block">
+      <strong>Application #${i+1}</strong>
+      <button class="delete-submission-btn" data-idx="${i}">Delete</button>
+      <ul>
+        <li><b>Full Name:</b> ${s.name}</li>
+        <li><b>Email:</b> ${s.email}</li>
+        <li><b>Phone:</b> ${s.phone}</li>
+        <li><b>Why do you want this job?</b> ${s.why}</li>
+        <li><b>Relevant experience:</b> ${s.experience}</li>
+        <li><b>Strengths:</b> ${s.strengths}</li>
+        <li><b>Weaknesses:</b> ${s.weaknesses}</li>
+        <li><b>Availability:</b> ${s.availability}</li>
+        <li><b>Preferred shift:</b> ${s.shift}</li>
+        <li><b>Willing to work weekends:</b> ${s.weekends}</li>
+        <li><b>Challenge overcome:</b> ${s.challenge}</li>
+        <li><b>Emergency contact:</b> ${s.emergency}</li>
+      </ul>
+    </div>
+  `).join("");
+}
+
+// ====== HIRE FORM ======
+document.getElementById('hire-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const data = {};
+  for(const [key, value] of formData.entries()) {
+    data[key] = value;
+  }
+  saveSubmission(data);
+  document.getElementById('form-message').textContent = "Application submitted! We'll be in touch.";
+  form.reset();
+  setTimeout(() => {
+    document.getElementById('form-message').textContent = "";
+  }, 3000);
+});
+
+// ====== ADMIN PANEL ======
+document.getElementById('admin-login-btn').addEventListener('click', function() {
+  const code = document.getElementById('admin-code').value;
+  if(code === getAdminCode()) {
+    document.getElementById('admin-login').classList.add('hidden');
+    document.getElementById('admin-panel').classList.remove('hidden');
+    renderAdminWorkers();
+    renderAdminAnnouncements();
+    renderAdminCalendar();
+    renderAdminSubmissions();
+  } else {
+    document.getElementById('admin-login-message').textContent = "Incorrect code.";
+  }
+});
+
+// Change admin code
+document.getElementById('change-admin-code-btn').addEventListener('click', function() {
+  const newCode = document.getElementById('new-admin-code').value.trim();
+  if(newCode.length < 3) {
+    document.getElementById('admin-code-message').textContent = "Code too short (minimum 3 characters).";
+    document.getElementById('admin-code-message').style.color = "#b32d2d";
+    return;
+  }
+  setAdminCode(newCode);
+  document.getElementById('admin-code-message').textContent = "Admin code changed!";
+  document.getElementById('admin-code-message').style.color = "#1eae60";
+  document.getElementById('new-admin-code').value = "";
+  setTimeout(() => document.getElementById('admin-code-message').textContent = "", 3000);
+});
+
+// Add Worker
+document.getElementById('add-worker-btn').addEventListener('click', function() {
+  document.getElementById('add-worker-form').classList.remove('hidden');
+  document.getElementById('add-worker-btn').classList.add('hidden');
+  document.getElementById('new-worker-name').value = "";
+  document.getElementById('new-worker-shift').value = "";
+  document.getElementById('new-worker-tasks').value = "";
+});
+document.getElementById('cancel-new-worker-btn').addEventListener('click', function() {
+  document.getElementById('add-worker-form').classList.add('hidden');
+  document.getElementById('add-worker-btn').classList.remove('hidden');
+});
+document.getElementById('save-new-worker-btn').addEventListener('click', function() {
+  const name = document.getElementById('new-worker-name').value.trim();
+  const shift = document.getElementById('new-worker-shift').value.trim();
+  const tasks = document.getElementById('new-worker-tasks').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if(!name || !shift || tasks.length === 0) return;
+  const workers = getWorkers();
+  workers.push({name, shift, tasks});
+  setWorkers(workers);
+  renderAdminWorkers();
+  renderShiftSquares();
+  document.getElementById('add-worker-form').classList.add('hidden');
+  document.getElementById('add-worker-btn').classList.remove('hidden');
+});
+
+// Edit/Delete Workers
+document.getElementById('admin-workers-list').addEventListener('click', function(e) {
+  if(e.target.classList.contains('edit-worker-btn')) {
+    const idx = +e.target.dataset.idx;
+    document.getElementById(`edit-worker-form-${idx}`).classList.remove('hidden');
+  }
+  if(e.target.classList.contains('cancel-edit-worker-btn')) {
+    const idx = +e.target.dataset.idx;
+    document.getElementById(`edit-worker-form-${idx}`).classList.add('hidden');
+  }
+  if(e.target.classList.contains('save-edit-worker-btn')) {
+    const idx = +e.target.dataset.idx;
+    const form = document.getElementById(`edit-worker-form-${idx}`);
+    const name = form.querySelector('.edit-worker-name').value.trim();
+    const shift = form.querySelector('.edit-worker-shift').value.trim();
+    const tasks = form.querySelector('.edit-worker-tasks-input').value.split(',').map(t=>t.trim()).filter(Boolean);
+    if(!name || !shift || tasks.length === 0) return;
+    const workers = getWorkers();
+    workers[idx] = {name, shift, tasks};
+    setWorkers(workers);
+    renderAdminWorkers();
+    renderShiftSquares();
+  }
+  if(e.target.classList.contains('delete-worker-btn')) {
+    const idx = +e.target.dataset.idx;
+    if(confirm("Delete this worker?")) {
       const workers = getWorkers();
-      const shiftSquares = document.getElementById('shift-squares');
-      shiftSquares.innerHTML = '';
-      workers.forEach((worker, idx) => {
-        const colors = ['orange-gradient', 'blue-gradient', 'green-gradient', 'purple-gradient'];
-        const color = colors[idx % colors.length];
-        const div = document.createElement('div');
-        div.className = `shift-square ${color}`;
-        div.innerHTML = `<span>${worker.name}</span>`;
-        div.addEventListener('click', () => {
-          renderProfileDetails(worker);
-        });
-        shiftSquares.appendChild(div);
-      });
-    }
-    function renderProfileDetails(worker) {
-      const profileDetails = document.getElementById('profile-details');
-      profileDetails.innerHTML = `
-        <h3>${worker.name}</h3>
-        <p><strong>Shift:</strong> ${worker.shift}</p>
-        <ul>
-          ${worker.tasks.map(task => `<li>${task}</li>`).join('')}
-        </ul>
-      `;
-    }
-
-    // ============ Announcements Section ============
-    function renderAnnouncements() {
-      const list = getAnnouncements();
-      const annList = document.getElementById('announcements-list');
-      annList.innerHTML = '';
-      list.forEach(a => {
-        const li = document.createElement('li');
-        li.textContent = a;
-        annList.appendChild(li);
-      });
-    }
-
-    // ============ Admin Announcements ============
-    function renderAdminAnnouncements() {
-      const list = getAnnouncements();
-      const annList = document.getElementById('admin-announcements-list');
-      annList.innerHTML = '';
-      list.forEach((a, i) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span class="admin-announcement-text" contenteditable="true" data-idx="${i}">${a}</span>
-          <button class="delete-announcement-btn" data-idx="${i}">Delete</button>
-        `;
-        annList.appendChild(li);
-      });
-    }
-
-    // ============ Admin Workers ============
-    function renderAdminWorkers() {
-      const workers = getWorkers();
-      const div = document.getElementById('admin-workers-list');
-      div.innerHTML = '';
-      workers.forEach((worker, idx) => {
-        const workerDiv = document.createElement('div');
-        workerDiv.className = "admin-worker-block";
-        workerDiv.innerHTML = `
-          <b>${worker.name}</b> (<span>${worker.shift}</span>)
-          <button class="edit-worker-btn" data-idx="${idx}">Edit</button>
-          <button class="delete-worker-btn" data-idx="${idx}">Delete</button>
-          <div class="admin-worker-tasks"><ul>${worker.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>
-          <div class="edit-worker-form hidden" id="edit-worker-form-${idx}">
-            <label>Name: <input type="text" value="${worker.name}" class="edit-worker-name"></label>
-            <label>Shift: <input type="text" value="${worker.shift}" class="edit-worker-shift"></label>
-            <label>Tasks (comma separated): <input type="text" value="${worker.tasks.join(', ')}" class="edit-worker-tasks-input"></label>
-            <button class="save-edit-worker-btn" data-idx="${idx}">Save</button>
-            <button class="cancel-edit-worker-btn" data-idx="${idx}">Cancel</button>
-          </div>
-        `;
-        div.appendChild(workerDiv);
-      });
-    }
-
-    // ============ Admin Submissions ============
-    function renderAdminSubmissions() {
-      const subs = getSubmissions();
-      const list = document.getElementById('submissions-list');
-      if(subs.length === 0) {
-        list.innerHTML = "<em>No submissions yet.</em>";
-        return;
-      }
-      list.innerHTML = subs.map((s, i) => `
-        <div class="submission-block">
-          <strong>Application #${i+1}</strong>
-          <button class="delete-submission-btn" data-idx="${i}">Delete</button>
-          <ul>
-            <li><b>Full Name:</b> ${s.name}</li>
-            <li><b>Email:</b> ${s.email}</li>
-            <li><b>Phone:</b> ${s.phone}</li>
-            <li><b>Why do you want this job?</b> ${s.why}</li>
-            <li><b>Relevant experience:</b> ${s.experience}</li>
-            <li><b>Strengths:</b> ${s.strengths}</li>
-            <li><b>Weaknesses:</b> ${s.weaknesses}</li>
-            <li><b>Availability:</b> ${s.availability}</li>
-            <li><b>Preferred shift:</b> ${s.shift}</li>
-            <li><b>Willing to work weekends:</b> ${s.weekends}</li>
-            <li><b>Challenge overcome:</b> ${s.challenge}</li>
-            <li><b>Emergency contact:</b> ${s.emergency}</li>
-          </ul>
-        </div>
-      `).join("");
-    }
-
-    // ============ Hire Form ============
-    document.getElementById('hire-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-      const data = {};
-      for(const [key, value] of formData.entries()) {
-        data[key] = value;
-      }
-      saveSubmission(data);
-      document.getElementById('form-message').textContent = "Application submitted! We'll be in touch.";
-      form.reset();
-      setTimeout(() => {
-        document.getElementById('form-message').textContent = "";
-      }, 3000);
-    });
-
-    // ============ Admin Panel ==============
-    document.getElementById('admin-login-btn').addEventListener('click', function() {
-      const code = document.getElementById('admin-code').value;
-      if(code === getAdminCode()) {
-        document.getElementById('admin-login').classList.add('hidden');
-        document.getElementById('admin-panel').classList.remove('hidden');
-        renderAdminWorkers();
-        renderAdminAnnouncements();
-        renderAdminCalendar();
-        renderAdminSubmissions();
-      } else {
-        document.getElementById('admin-login-message').textContent = "Incorrect code.";
-      }
-    });
-
-    // Change admin code
-    document.getElementById('change-admin-code-btn').addEventListener('click', function() {
-      const newCode = document.getElementById('new-admin-code').value.trim();
-      if(newCode.length < 3) {
-        document.getElementById('admin-code-message').textContent = "Code too short (minimum 3 characters).";
-        document.getElementById('admin-code-message').style.color = "#b32d2d";
-        return;
-      }
-      setAdminCode(newCode);
-      document.getElementById('admin-code-message').textContent = "Admin code changed!";
-      document.getElementById('admin-code-message').style.color = "#1eae60";
-      document.getElementById('new-admin-code').value = "";
-      setTimeout(() => document.getElementById('admin-code-message').textContent = "", 3000);
-    });
-
-    // Add Worker
-    document.getElementById('add-worker-btn').addEventListener('click', function() {
-      document.getElementById('add-worker-form').classList.remove('hidden');
-      document.getElementById('add-worker-btn').classList.add('hidden');
-      document.getElementById('new-worker-name').value = "";
-      document.getElementById('new-worker-shift').value = "";
-      document.getElementById('new-worker-tasks').value = "";
-    });
-    document.getElementById('cancel-new-worker-btn').addEventListener('click', function() {
-      document.getElementById('add-worker-form').classList.add('hidden');
-      document.getElementById('add-worker-btn').classList.remove('hidden');
-    });
-    document.getElementById('save-new-worker-btn').addEventListener('click', function() {
-      const name = document.getElementById('new-worker-name').value.trim();
-      const shift = document.getElementById('new-worker-shift').value.trim();
-      const tasks = document.getElementById('new-worker-tasks').value.split(',').map(t=>t.trim()).filter(Boolean);
-      if(!name || !shift || tasks.length === 0) return;
-      const workers = getWorkers();
-      workers.push({name, shift, tasks});
+      workers.splice(idx, 1);
       setWorkers(workers);
       renderAdminWorkers();
       renderShiftSquares();
-      document.getElementById('add-worker-form').classList.add('hidden');
-      document.getElementById('add-worker-btn').classList.remove('hidden');
-    });
+    }
+  }
+});
 
-    // Edit/Delete Workers
-    document.getElementById('admin-workers-list').addEventListener('click', function(e) {
-      if(e.target.classList.contains('edit-worker-btn')) {
-        const idx = +e.target.dataset.idx;
-        document.getElementById(`edit-worker-form-${idx}`).classList.remove('hidden');
-      }
-      if(e.target.classList.contains('cancel-edit-worker-btn')) {
-        const idx = +e.target.dataset.idx;
-        document.getElementById(`edit-worker-form-${idx}`).classList.add('hidden');
-      }
-      if(e.target.classList.contains('save-edit-worker-btn')) {
-        const idx = +e.target.dataset.idx;
-        const form = document.getElementById(`edit-worker-form-${idx}`);
-        const name = form.querySelector('.edit-worker-name').value.trim();
-        const shift = form.querySelector('.edit-worker-shift').value.trim();
-        const tasks = form.querySelector('.edit-worker-tasks-input').value.split(',').map(t=>t.trim()).filter(Boolean);
-        if(!name || !shift || tasks.length === 0) return;
-        const workers = getWorkers();
-        workers[idx] = {name, shift, tasks};
-        setWorkers(workers);
-        renderAdminWorkers();
-        renderShiftSquares();
-      }
-      if(e.target.classList.contains('delete-worker-btn')) {
-        const idx = +e.target.dataset.idx;
-        if(confirm("Delete this worker?")) {
-          const workers = getWorkers();
-          workers.splice(idx, 1);
-          setWorkers(workers);
-          renderAdminWorkers();
-          renderShiftSquares();
-        }
-      }
-    });
-
-    // Admin Announcements
-    document.getElementById('admin-add-announcement-btn').addEventListener('click', function() {
-      const val = document.getElementById('admin-new-announcement').value.trim();
-      if(!val) return;
+// Admin Announcements
+document.getElementById('admin-add-announcement-btn').addEventListener('click', function() {
+  const val = document.getElementById('admin-new-announcement').value.trim();
+  if(!val) return;
+  const list = getAnnouncements();
+  list.push(val);
+  setAnnouncements(list);
+  document.getElementById('admin-new-announcement').value = "";
+  renderAdminAnnouncements();
+  renderAnnouncements();
+});
+document.getElementById('admin-announcements-list').addEventListener('click', function(e) {
+  if(e.target.classList.contains('delete-announcement-btn')) {
+    const idx = +e.target.dataset.idx;
+    if(confirm("Delete this announcement?")) {
       const list = getAnnouncements();
-      list.push(val);
+      list.splice(idx, 1);
       setAnnouncements(list);
-      document.getElementById('admin-new-announcement').value = "";
       renderAdminAnnouncements();
       renderAnnouncements();
-    });
-    document.getElementById('admin-announcements-list').addEventListener('click', function(e) {
-      if(e.target.classList.contains('delete-announcement-btn')) {
-        const idx = +e.target.dataset.idx;
-        if(confirm("Delete this announcement?")) {
-          const list = getAnnouncements();
-          list.splice(idx, 1);
-          setAnnouncements(list);
-          renderAdminAnnouncements();
-          renderAnnouncements();
-        }
-      }
-    });
-    document.getElementById('admin-announcements-list').addEventListener('blur', function(e) {
-      if(e.target.classList.contains('admin-announcement-text')) {
-        const idx = +e.target.dataset.idx;
-        const list = getAnnouncements();
-        list[idx] = e.target.textContent.trim();
-        setAnnouncements(list);
-        renderAnnouncements();
-      }
-    }, true);
-
-    // Admin Submissions Delete
-    document.getElementById('submissions-list').addEventListener('click', function(e) {
-      if(e.target.classList.contains('delete-submission-btn')) {
-        const idx = +e.target.dataset.idx;
-        if(confirm("Delete this submission?")) {
-          const subs = getSubmissions();
-          subs.splice(idx, 1);
-          setSubmissions(subs);
-          renderAdminSubmissions();
-        }
-      }
-    });
-
-    // ============ Calendar Logic ============
-    let calendarEvents = getCalendarEvents();
-    const HOUR_START = 6, HOUR_END = 21;
-    let weekStartDate = getMonday(new Date());
-
-    function getMonday(d) {
-      d = new Date(d);
-      let day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
-      return new Date(d.setDate(diff));
     }
-    function addDays(date, days) {
-      const d = new Date(date);
-      d.setDate(d.getDate() + days);
-      return d;
+  }
+});
+document.getElementById('admin-announcements-list').addEventListener('blur', function(e) {
+  if(e.target.classList.contains('admin-announcement-text')) {
+    const idx = +e.target.dataset.idx;
+    const list = getAnnouncements();
+    list[idx] = e.target.textContent.trim();
+    setAnnouncements(list);
+    renderAnnouncements();
+  }
+}, true);
+
+// Admin Submissions Delete
+document.getElementById('submissions-list').addEventListener('click', function(e) {
+  if(e.target.classList.contains('delete-submission-btn')) {
+    const idx = +e.target.dataset.idx;
+    if(confirm("Delete this submission?")) {
+      const subs = getSubmissions();
+      subs.splice(idx, 1);
+      setSubmissions(subs);
+      renderAdminSubmissions();
     }
-    function formatWeekLabel(start) {
-      const end = addDays(start, 6);
-      const opts = { month: "short", day: "numeric" };
-      return `${start.toLocaleDateString(undefined, opts)} - ${end.toLocaleDateString(undefined, opts)}`;
+  }
+});
+
+// ====== CALENDAR LOGIC ======
+let calendarEvents = getCalendarEvents();
+const HOUR_START = 6, HOUR_END = 21;
+let weekStartDate = getMonday(new Date());
+
+function getMonday(d) {
+  d = new Date(d);
+  let day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function formatWeekLabel(start) {
+  const end = addDays(start, 6);
+  const opts = { month: "short", day: "numeric" };
+  return `${start.toLocaleDateString(undefined, opts)} - ${end.toLocaleDateString(undefined, opts)}`;
+}
+function renderCalendarGoogleStyle() {
+  calendarEvents = getCalendarEvents();
+  const grid = document.getElementById("calendar-grid");
+  grid.innerHTML = "";
+
+  // Header Row
+  const headerRow = document.createElement("div");
+  headerRow.className = "cal-row cal-header";
+  headerRow.innerHTML = `<div class="cal-cell cal-time-header"></div>`;
+  for (let i = 0; i < 7; i++) {
+    let d = addDays(weekStartDate, i);
+    const opts = { weekday: "short", month: "short", day: "numeric" };
+    headerRow.innerHTML += `<div class="cal-cell cal-day-header">${d.toLocaleDateString(undefined, opts)}</div>`;
+  }
+  grid.appendChild(headerRow);
+
+  // Main rows (each hour)
+  for (let hour = HOUR_START; hour < HOUR_END; hour++) {
+    const row = document.createElement("div");
+    row.className = "cal-row";
+    // Time label
+    const ampm = hour === 0 ? "12am" : hour < 12 ? hour + "am" : (hour === 12 ? "12pm" : (hour - 12) + "pm");
+    row.innerHTML = `<div class="cal-cell cal-time">${ampm}</div>`;
+    // Day cells
+    for (let day = 0; day < 7; day++) {
+      row.innerHTML += `<div class="cal-cell cal-slot" data-day="${day}" data-hour="${hour}"></div>`;
     }
-    function renderCalendarGoogleStyle() {
+    grid.appendChild(row);
+  }
+
+  // Render events as Google-style blocks
+  calendarEvents.forEach(ev => {
+    let dayIdx = ev.day;
+    let startRow = Math.floor(ev.start) - HOUR_START + 1; // +1 for header
+    let endRow = Math.ceil(ev.end) - HOUR_START + 1;
+    if (startRow < 1 || startRow > (HOUR_END - HOUR_START)) return;
+    const gridRows = grid.querySelectorAll(".cal-row");
+    const topCell = gridRows[startRow]?.querySelector(`.cal-slot[data-day="${dayIdx}"]`);
+    if (!topCell) return;
+    const eventDiv = document.createElement("div");
+    eventDiv.className = "cal-event-block";
+    eventDiv.style.background = ev.color;
+    eventDiv.style.top = ((ev.start % 1) * 40) + "px";
+    eventDiv.style.height = ((ev.end - ev.start) * 40 - 3) + "px";
+    eventDiv.textContent = ev.title;
+    topCell.style.position = "relative";
+    eventDiv.style.position = "absolute";
+    eventDiv.style.left = "7px";
+    eventDiv.style.right = "7px";
+    eventDiv.style.zIndex = 2;
+    eventDiv.style.display = "flex";
+    eventDiv.style.alignItems = "center";
+    eventDiv.style.paddingLeft = "7px";
+    topCell.appendChild(eventDiv);
+  });
+
+  document.getElementById("calendar-week-label").textContent = formatWeekLabel(weekStartDate);
+}
+
+// Admin Calendar Management
+function renderAdminCalendar() {
+  calendarEvents = getCalendarEvents();
+  const listDiv = document.getElementById('admin-calendar-list');
+  listDiv.innerHTML = '';
+  if (calendarEvents.length === 0) {
+    listDiv.innerHTML = '<em>No events scheduled.</em>';
+    return;
+  }
+  calendarEvents.forEach((ev, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = "admin-cal-event";
+    wrap.style.borderLeft = `7px solid ${ev.color}`;
+    wrap.innerHTML = `
+      <b>${ev.title}</b>
+      <span class="admin-cal-desc">(${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][ev.day]} ${toTimeStr(ev.start)}-${toTimeStr(ev.end)})</span>
+      <button class="admin-cal-edit-btn" data-idx="${idx}">Edit</button>
+      <button class="admin-cal-delete-btn" data-idx="${idx}">Delete</button>
+      <div class="admin-cal-edit-form hidden" id="admin-cal-edit-form-${idx}">
+        <label>Title: <input type="text" value="${ev.title}" class="edit-cal-title"></label>
+        <label>Day:
+          <select class="edit-cal-day">
+            <option value="0" ${ev.day===0?'selected':''}>Monday</option>
+            <option value="1" ${ev.day===1?'selected':''}>Tuesday</option>
+            <option value="2" ${ev.day===2?'selected':''}>Wednesday</option>
+            <option value="3" ${ev.day===3?'selected':''}>Thursday</option>
+            <option value="4" ${ev.day===4?'selected':''}>Friday</option>
+            <option value="5" ${ev.day===5?'selected':''}>Saturday</option>
+            <option value="6" ${ev.day===6?'selected':''}>Sunday</option>
+          </select>
+        </label>
+        <label>Start Time:
+          <input type="time" value="${fromHour(ev.start)}" class="edit-cal-start">
+        </label>
+        <label>End Time:
+          <input type="time" value="${fromHour(ev.end)}" class="edit-cal-end">
+        </label>
+        <label>Color:
+          <input type="color" value="${ev.color}" class="edit-cal-color">
+        </label>
+        <button class="save-cal-edit-btn" data-idx="${idx}">Save</button>
+        <button class="cancel-cal-edit-btn" data-idx="${idx}">Cancel</button>
+      </div>
+    `;
+    listDiv.appendChild(wrap);
+  });
+}
+function toTimeStr(h) {
+  let hr = Math.floor(h);
+  let min = Math.round((h % 1) * 60);
+  let s = hr === 0 ? "12am" : hr < 12 ? hr+"am" : hr === 12 ? "12pm" : (hr-12)+"pm";
+  if(min>0) s = s.replace(/am|pm/,'') + ":" + (min<10?"0":"") + min + s.slice(-2);
+  return s;
+}
+function fromHour(val) {
+  let hr = Math.floor(val);
+  let min = Math.round((val % 1) * 60);
+  return (hr<10?"0":"") + hr + ":" + (min<10?"0":"") + min;
+}
+document.getElementById('admin-calendar-list').addEventListener('click', function(e) {
+  if (e.target.classList.contains('admin-cal-edit-btn')) {
+    const idx = +e.target.dataset.idx;
+    document.getElementById(`admin-cal-edit-form-${idx}`).classList.remove('hidden');
+  }
+  if (e.target.classList.contains('cancel-cal-edit-btn')) {
+    const idx = +e.target.dataset.idx;
+    document.getElementById(`admin-cal-edit-form-${idx}`).classList.add('hidden');
+  }
+  if (e.target.classList.contains('save-cal-edit-btn')) {
+    const idx = +e.target.dataset.idx;
+    const form = document.getElementById(`admin-cal-edit-form-${idx}`);
+    const title = form.querySelector('.edit-cal-title').value.trim();
+    const day = +form.querySelector('.edit-cal-day').value;
+    const start = timeToHour(form.querySelector('.edit-cal-start').value);
+    const end = timeToHour(form.querySelector('.edit-cal-end').value);
+    const color = form.querySelector('.edit-cal-color').value;
+    if (!title || end <= start) return;
+    calendarEvents = getCalendarEvents();
+    calendarEvents[idx] = { title, day, start, end, color };
+    setCalendarEvents(calendarEvents);
+    renderAdminCalendar();
+    renderCalendarGoogleStyle();
+  }
+  if (e.target.classList.contains('admin-cal-delete-btn')) {
+    const idx = +e.target.dataset.idx;
+    if (confirm("Delete this event?")) {
       calendarEvents = getCalendarEvents();
-      const grid = document.getElementById("calendar-grid");
-      grid.innerHTML = "";
-
-      // Header Row
-      const headerRow = document.createElement("div");
-      headerRow.className = "cal-row cal-header";
-      headerRow.innerHTML = `<div class="cal-cell cal-time-header"></div>`;
-      for (let i = 0; i < 7; i++) {
-        let d = addDays(weekStartDate, i);
-        const opts = { weekday: "short", month: "short", day: "numeric" };
-        headerRow.innerHTML += `<div class="cal-cell cal-day-header">${d.toLocaleDateString(undefined, opts)}</div>`;
-      }
-      grid.appendChild(headerRow);
-
-      // Main rows (each hour)
-      for (let hour = HOUR_START; hour < HOUR_END; hour++) {
-        const row = document.createElement("div");
-        row.className = "cal-row";
-        // Time label
-        const ampm = hour === 0 ? "12am" : hour < 12 ? hour + "am" : (hour === 12 ? "12pm" : (hour - 12) + "pm");
-        row.innerHTML = `<div class="cal-cell cal-time">${ampm}</div>`;
-        // Day cells
-        for (let day = 0; day < 7; day++) {
-          row.innerHTML += `<div class="cal-cell cal-slot" data-day="${day}" data-hour="${hour}"></div>`;
-        }
-        grid.appendChild(row);
-      }
-
-      // Render events as Google-style blocks
-      calendarEvents.forEach(ev => {
-        let dayIdx = ev.day;
-        let startRow = Math.floor(ev.start) - HOUR_START + 1; // +1 for header
-        let endRow = Math.ceil(ev.end) - HOUR_START + 1;
-        if (startRow < 1 || startRow > (HOUR_END - HOUR_START)) return;
-        const gridRows = grid.querySelectorAll(".cal-row");
-        const topCell = gridRows[startRow]?.querySelector(`.cal-slot[data-day="${dayIdx}"]`);
-        if (!topCell) return;
-        const eventDiv = document.createElement("div");
-        eventDiv.className = "cal-event-block";
-        eventDiv.style.background = ev.color;
-        eventDiv.style.top = ((ev.start % 1) * 40) + "px";
-        eventDiv.style.height = ((ev.end - ev.start) * 40 - 3) + "px";
-        eventDiv.textContent = ev.title;
-        topCell.style.position = "relative";
-        eventDiv.style.position = "absolute";
-        eventDiv.style.left = "7px";
-        eventDiv.style.right = "7px";
-        eventDiv.style.zIndex = 2;
-        eventDiv.style.display = "flex";
-        eventDiv.style.alignItems = "center";
-        eventDiv.style.paddingLeft = "7px";
-        topCell.appendChild(eventDiv);
-      });
-
-      document.getElementById("calendar-week-label").textContent = formatWeekLabel(weekStartDate);
-    }
-
-    // Admin Calendar Management
-    function renderAdminCalendar() {
-      calendarEvents = getCalendarEvents();
-      const listDiv = document.getElementById('admin-calendar-list');
-      listDiv.innerHTML = '';
-      if (calendarEvents.length === 0) {
-        listDiv.innerHTML = '<em>No events scheduled.</em>';
-        return;
-      }
-      calendarEvents.forEach((ev, idx) => {
-        const wrap = document.createElement('div');
-        wrap.className = "admin-cal-event";
-        wrap.style.borderLeft = `7px solid ${ev.color}`;
-        wrap.innerHTML = `
-          <b>${ev.title}</b>
-          <span class="admin-cal-desc">(${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][ev.day]} ${toTimeStr(ev.start)}-${toTimeStr(ev.end)})</span>
-          <button class="admin-cal-edit-btn" data-idx="${idx}">Edit</button>
-          <button class="admin-cal-delete-btn" data-idx="${idx}">Delete</button>
-          <div class="admin-cal-edit-form hidden" id="admin-cal-edit-form-${idx}">
-            <label>Title: <input type="text" value="${ev.title}" class="edit-cal-title"></label>
-            <label>Day:
-              <select class="edit-cal-day">
-                <option value="0" ${ev.day===0?'selected':''}>Monday</option>
-                <option value="1" ${ev.day===1?'selected':''}>Tuesday</option>
-                <option value="2" ${ev.day===2?'selected':''}>Wednesday</option>
-                <option value="3" ${ev.day===3?'selected':''}>Thursday</option>
-                <option value="4" ${ev.day===4?'selected':''}>Friday</option>
-                <option value="5" ${ev.day===5?'selected':''}>Saturday</option>
-                <option value="6" ${ev.day===6?'selected':''}>Sunday</option>
-              </select>
-            </label>
-            <label>Start Time:
-              <input type="time" value="${fromHour(ev.start)}" class="edit-cal-start">
-            </label>
-            <label>End Time:
-              <input type="time" value="${fromHour(ev.end)}" class="edit-cal-end">
-            </label>
-            <label>Color:
-              <input type="color" value="${ev.color}" class="edit-cal-color">
-            </label>
-            <button class="save-cal-edit-btn" data-idx="${idx}">Save</button>
-            <button class="cancel-cal-edit-btn" data-idx="${idx}">Cancel</button>
-          </div>
-        `;
-        listDiv.appendChild(wrap);
-      });
-    }
-    function toTimeStr(h) {
-      let hr = Math.floor(h);
-      let min = Math.round((h % 1) * 60);
-      let s = hr === 0 ? "12am" : hr < 12 ? hr+"am" : hr === 12 ? "12pm" : (hr-12)+"pm";
-      if(min>0) s = s.replace(/am|pm/,'') + ":" + (min<10?"0":"") + min + s.slice(-2);
-      return s;
-    }
-    function fromHour(val) {
-      let hr = Math.floor(val);
-      let min = Math.round((val % 1) * 60);
-      return (hr<10?"0":"") + hr + ":" + (min<10?"0":"") + min;
-    }
-    document.getElementById('admin-calendar-list').addEventListener('click', function(e) {
-      if (e.target.classList.contains('admin-cal-edit-btn')) {
-        const idx = +e.target.dataset.idx;
-        document.getElementById(`admin-cal-edit-form-${idx}`).classList.remove('hidden');
-      }
-      if (e.target.classList.contains('cancel-cal-edit-btn')) {
-        const idx = +e.target.dataset.idx;
-        document.getElementById(`admin-cal-edit-form-${idx}`).classList.add('hidden');
-      }
-      if (e.target.classList.contains('save-cal-edit-btn')) {
-        const idx = +e.target.dataset.idx;
-        const form = document.getElementById(`admin-cal-edit-form-${idx}`);
-        const title = form.querySelector('.edit-cal-title').value.trim();
-        const day = +form.querySelector('.edit-cal-day').value;
-        const start = timeToHour(form.querySelector('.edit-cal-start').value);
-        const end = timeToHour(form.querySelector('.edit-cal-end').value);
-        const color = form.querySelector('.edit-cal-color').value;
-        if (!title || end <= start) return;
-        calendarEvents = getCalendarEvents();
-        calendarEvents[idx] = { title, day, start, end, color };
-        setCalendarEvents(calendarEvents);
-        renderAdminCalendar();
-        renderCalendarGoogleStyle();
-      }
-      if (e.target.classList.contains('admin-cal-delete-btn')) {
-        const idx = +e.target.dataset.idx;
-        if (confirm("Delete this event?")) {
-          calendarEvents = getCalendarEvents();
-          calendarEvents.splice(idx, 1);
-          setCalendarEvents(calendarEvents);
-          renderAdminCalendar();
-          renderCalendarGoogleStyle();
-        }
-      }
-    });
-    document.getElementById('admin-add-calendar-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const title = document.getElementById('admin-cal-title').value.trim();
-      const day = +document.getElementById('admin-cal-day').value;
-      const start = timeToHour(document.getElementById('admin-cal-start').value);
-      const end = timeToHour(document.getElementById('admin-cal-end').value);
-      const color = document.getElementById('admin-cal-color').value;
-      if (!title || end <= start) return;
-      calendarEvents = getCalendarEvents();
-      calendarEvents.push({ title, day, start, end, color });
+      calendarEvents.splice(idx, 1);
       setCalendarEvents(calendarEvents);
       renderAdminCalendar();
       renderCalendarGoogleStyle();
-      e.target.reset();
-    });
-    function timeToHour(str) {
-      if (!str) return 0;
-      const [h, m] = str.split(':').map(Number);
-      return h + m/60;
     }
+  }
+});
+document.getElementById('admin-add-calendar-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const title = document.getElementById('admin-cal-title').value.trim();
+  const day = +document.getElementById('admin-cal-day').value;
+  const start = timeToHour(document.getElementById('admin-cal-start').value);
+  const end = timeToHour(document.getElementById('admin-cal-end').value);
+  const color = document.getElementById('admin-cal-color').value;
+  if (!title || end <= start) return;
+  calendarEvents = getCalendarEvents();
+  calendarEvents.push({ title, day, start, end, color });
+  setCalendarEvents(calendarEvents);
+  renderAdminCalendar();
+  renderCalendarGoogleStyle();
+  e.target.reset();
+});
+function timeToHour(str) {
+  if (!str) return 0;
+  const [h, m] = str.split(':').map(Number);
+  return h + m/60;
+}
 
-    // ============ Navigation ============
-    function hideAllDetails() {
-      ["shifts-details", "announcements-details", "hire-details", "admin-details", "calendar-details"].forEach(id => {
-        var e = document.getElementById(id);
-        if(e) e.classList.add("hidden");
-      });
-      ["shifts-square", "announcements-square", "hire-square", "admin-square", "calendar-square"].forEach(id => {
-        var e = document.getElementById(id);
-        if(e) e.classList.remove("selected");
-      });
-    }
-    document.getElementById('shifts-square').onclick = function() {
-      hideAllDetails(); document.getElementById('shifts-details').classList.remove('hidden');
-      this.classList.add('selected');
-      renderShiftSquares();
-      document.getElementById('profile-details').innerHTML = `<h3>Click a profile to see shift details</h3>`;
-    };
-    document.getElementById('announcements-square').onclick = function() {
-      hideAllDetails(); document.getElementById('announcements-details').classList.remove('hidden');
-      this.classList.add('selected');
-      renderAnnouncements();
-    };
-    document.getElementById('hire-square').onclick = function() {
-      hideAllDetails(); document.getElementById('hire-details').classList.remove('hidden');
-      this.classList.add('selected');
-    };
-    document.getElementById('admin-square').onclick = function() {
-      hideAllDetails(); document.getElementById('admin-details').classList.remove('hidden');
-      this.classList.add('selected');
-      document.getElementById('admin-login').classList.remove('hidden');
-      document.getElementById('admin-panel').classList.add('hidden');
-      document.getElementById('admin-login-message').textContent = '';
-      document.getElementById('admin-code').value = '';
-    };
-    document.getElementById('calendar-square').onclick = function() {
-      hideAllDetails();
-      document.getElementById('calendar-details').classList.remove('hidden');
-      this.classList.add('selected');
-      renderCalendarGoogleStyle();
-    };
-    document.getElementById('calendar-today-btn').onclick = function () {
-      weekStartDate = getMonday(new Date());
-      renderCalendarGoogleStyle();
-    };
-    document.getElementById('calendar-prev-btn').onclick = function () {
-      weekStartDate = addDays(weekStartDate, -7);
-      renderCalendarGoogleStyle();
-    };
-    document.getElementById('calendar-next-btn').onclick = function () {
-      weekStartDate = addDays(weekStartDate, 7);
-      renderCalendarGoogleStyle();
-    };
+// ====== PROFILE LOGIN & SHIFT LOGIC ======
+const defaultProfiles = {
+  john: {
+    username: "john",
+    password: "johnpass",
+    name: "John Doe",
+    schedule: "Mon-Fri, 9:00 AM - 5:00 PM",
+    lunch: "12:30 PM - 1:00 PM",
+    jobs: [
+      { title: "Front Desk Clerk", duration: "2 yrs", hours: "9am-5pm", lunch: "12:30-1:00" },
+      { title: "Inventory Assistant", duration: "1 yr", hours: "7am-3pm", lunch: "11:30-12:00" }
+    ],
+    history: []
+  },
+  jane: {
+    username: "jane",
+    password: "janepass",
+    name: "Jane Doe",
+    schedule: "Tue-Sat, 1:00 PM - 9:00 PM",
+    lunch: "5:00 PM - 5:30 PM",
+    jobs: [
+      { title: "Supervisor", duration: "3 yrs", hours: "1pm-9pm", lunch: "5:00-5:30" }
+    ],
+    history: []
+  },
+  bob: {
+    username: "bob",
+    password: "bobpass",
+    name: "Bob Smith",
+    schedule: "Mon-Fri, 6:00 AM - 2:00 PM",
+    lunch: "10:00 AM - 10:30 AM",
+    jobs: [
+      { title: "Maintenance", duration: "4 yrs", hours: "6am-2pm", lunch: "10:00-10:30" }
+    ],
+    history: []
+  }
+};
+function getProfiles() {
+  return JSON.parse(localStorage.getItem('profiles') || JSON.stringify(defaultProfiles));
+}
+function setProfiles(profiles) {
+  localStorage.setItem('profiles', JSON.stringify(profiles));
+}
+function getProfileByUsername(username) {
+  const profiles = getProfiles();
+  for (const key in profiles) {
+    if (profiles[key].username === username) return {key, ...profiles[key]};
+  }
+  return null;
+}
+function updateProfileHistory(profileKey, shift) {
+  const profiles = getProfiles();
+  profiles[profileKey].history.unshift(shift);
+  setProfiles(profiles);
+}
+let currentProfileKey = null;
+let currentShift = null;
+function showProfileLogin() {
+  document.getElementById('profile-login-section').classList.remove('hidden');
+  document.getElementById('profile-main-section').classList.add('hidden');
+  document.getElementById('profile-login-username').value = '';
+  document.getElementById('profile-login-password').value = '';
+  document.getElementById('profile-login-message').textContent = '';
+  currentProfileKey = null;
+  currentShift = null;
+}
+function showProfileMain(profileKey) {
+  currentProfileKey = profileKey;
+  document.getElementById('profile-login-section').classList.add('hidden');
+  document.getElementById('profile-main-section').classList.remove('hidden');
+  const profiles = getProfiles();
+  const profile = profiles[profileKey];
+  document.getElementById('profile-name').textContent = profile.name;
+  document.getElementById('profile-schedule').textContent = profile.schedule;
+  document.getElementById('profile-lunch').textContent = profile.lunch;
+  const historyList = document.getElementById('profile-history-list');
+  historyList.innerHTML = '';
+  profile.jobs.forEach(job => {
+    const li = document.createElement('li');
+    li.innerHTML = `<b>${job.title}</b> (${job.duration}), Hours: ${job.hours}, Lunch: ${job.lunch}`;
+    historyList.appendChild(li);
+  });
+  document.getElementById('profile-current-shift').textContent = profile.schedule;
+  renderShiftHistory(profileKey);
+  document.getElementById('clock-in-btn').disabled = false;
+  document.getElementById('start-break-btn').disabled = true;
+  document.getElementById('end-break-btn').disabled = true;
+  document.getElementById('clock-out-btn').disabled = true;
+  document.getElementById('shift-status').textContent = '';
+  currentShift = null;
+}
+function renderShiftHistory(profileKey) {
+  const profiles = getProfiles();
+  const shifts = profiles[profileKey]?.history || [];
+  const cont = document.getElementById('profile-shift-history');
+  if(!cont) return;
+  if(!shifts || shifts.length === 0) {
+    cont.innerHTML = "<em>No shifts yet.</em>";
+    return;
+  }
+  cont.innerHTML = shifts.map((s,i) => `
+    <div class="shift-history-block">
+      <b>Shift #${shifts.length-i}</b> (${s.date})
+      <ul>
+        <li><b>Clocked In:</b> ${s.clockIn || "-"}</li>
+        <li><b>Break Start:</b> ${s.breakStart || "-"}</li>
+        <li><b>Break End:</b> ${s.breakEnd || "-"}</li>
+        <li><b>Clocked Out:</b> ${s.clockOut || "-"}</li>
+      </ul>
+    </div>
+  `).join('');
+}
+document.getElementById('profile-square').onclick = function() {
+  hideAllDetails();
+  document.getElementById('profile-details-section').classList.remove('hidden');
+  this.classList.add('selected');
+  showProfileLogin();
+};
+document.getElementById('profile-login-form').onsubmit = function(e) {
+  e.preventDefault();
+  const username = document.getElementById('profile-login-username').value.trim();
+  const password = document.getElementById('profile-login-password').value;
+  const profileObj = getProfileByUsername(username);
+  if (profileObj && profileObj.password === password) {
+    showProfileMain(profileObj.key);
+  } else {
+    document.getElementById('profile-login-message').textContent = "Invalid username or password.";
+  }
+};
+document.getElementById('profile-logout-btn').onclick = () => showProfileLogin();
+document.getElementById('clock-in-btn').onclick = function() {
+  if(currentShift) return;
+  const now = new Date();
+  currentShift = {
+    date: now.toLocaleDateString(),
+    clockIn: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+    breakStart: null,
+    breakEnd: null,
+    clockOut: null
+  };
+  this.disabled = true;
+  document.getElementById('start-break-btn').disabled = false;
+  document.getElementById('clock-out-btn').disabled = false;
+  document.getElementById('shift-status').textContent = "Shift started at " + currentShift.clockIn;
+};
+document.getElementById('start-break-btn').onclick = function() {
+  if(!currentShift || currentShift.breakStart) return;
+  const now = new Date();
+  currentShift.breakStart = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  this.disabled = true;
+  document.getElementById('end-break-btn').disabled = false;
+  document.getElementById('shift-status').textContent = "Break started at " + currentShift.breakStart;
+};
+document.getElementById('end-break-btn').onclick = function() {
+  if(!currentShift || !currentShift.breakStart || currentShift.breakEnd) return;
+  const now = new Date();
+  currentShift.breakEnd = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  this.disabled = true;
+  document.getElementById('shift-status').textContent = "Break ended at " + currentShift.breakEnd;
+};
+document.getElementById('clock-out-btn').onclick = function() {
+  if(!currentShift || currentShift.clockOut) return;
+  const now = new Date();
+  currentShift.clockOut = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  updateProfileHistory(currentProfileKey, currentShift);
+  renderShiftHistory(currentProfileKey);
+  document.getElementById('clock-in-btn').disabled = false;
+  document.getElementById('start-break-btn').disabled = true;
+  document.getElementById('end-break-btn').disabled = true;
+  this.disabled = true;
+  document.getElementById('shift-status').textContent = "Clocked out at " + currentShift.clockOut + ". Shift saved!";
+  currentShift = null;
+};
 
-    // ============ Initial Render ============
-    renderShiftSquares();
-    renderAnnouncements();
+// ====== NAVIGATION ======
+function hideAllDetails() {
+  [
+    "shifts-details", "announcements-details", "hire-details", 
+    "admin-details", "calendar-details", "profile-details-section"
+  ].forEach(id => {
+    var e = document.getElementById(id);
+    if(e) e.classList.add("hidden");
+  });
+  [
+    "shifts-square", "announcements-square", "hire-square", 
+    "admin-square", "calendar-square", "profile-square"
+  ].forEach(id => {
+    var e = document.getElementById(id);
+    if(e) e.classList.remove("selected");
+  });
+}
+document.getElementById('shifts-square').onclick = function() {
+  hideAllDetails(); document.getElementById('shifts-details').classList.remove('hidden');
+  this.classList.add('selected');
+  renderShiftSquares();
+  document.getElementById('profile-details').innerHTML = `<h3>Click a profile to see shift details</h3>`;
+};
+document.getElementById('announcements-square').onclick = function() {
+  hideAllDetails(); document.getElementById('announcements-details').classList.remove('hidden');
+  this.classList.add('selected');
+  renderAnnouncements();
+};
+document.getElementById('hire-square').onclick = function() {
+  hideAllDetails(); document.getElementById('hire-details').classList.remove('hidden');
+  this.classList.add('selected');
+};
+document.getElementById('admin-square').onclick = function() {
+  hideAllDetails(); document.getElementById('admin-details').classList.remove('hidden');
+  this.classList.add('selected');
+  document.getElementById('admin-login').classList.remove('hidden');
+  document.getElementById('admin-panel').classList.add('hidden');
+  document.getElementById('admin-login-message').textContent = '';
+  document.getElementById('admin-code').value = '';
+};
+document.getElementById('calendar-square').onclick = function() {
+  hideAllDetails();
+  document.getElementById('calendar-details').classList.remove('hidden');
+  this.classList.add('selected');
+  renderCalendarGoogleStyle();
+};
+document.getElementById('calendar-today-btn').onclick = function () {
+  weekStartDate = getMonday(new Date());
+  renderCalendarGoogleStyle();
+};
+document.getElementById('calendar-prev-btn').onclick = function () {
+  weekStartDate = addDays(weekStartDate, -7);
+  renderCalendarGoogleStyle();
+};
+document.getElementById('calendar-next-btn').onclick = function () {
+  weekStartDate = addDays(weekStartDate, 7);
+  renderCalendarGoogleStyle();
+};
+
+// ====== INITIAL RENDER ======
+renderShiftSquares();
+renderAnnouncements();
+
   </script>
 </body>
 </html>
