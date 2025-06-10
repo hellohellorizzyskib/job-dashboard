@@ -249,6 +249,107 @@ body {
   pointer-events: auto;
 }
 
+.admin-cal-event {
+  margin-bottom: 10px;
+  background: #faf9f6;
+  border-radius: 8px;
+  padding: 10px 14px 7px 14px;
+  font-size: 1.03rem;
+  box-shadow: 0 2px 8px 0 rgba(80,90,110,0.08);
+  border-left: 7px solid #ffb347;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.admin-cal-event .admin-cal-desc {
+  font-size: 0.98rem;
+  color: #555;
+  margin-left: 10px;
+}
+.admin-cal-event button {
+  margin-left: 7px;
+  margin-bottom: 3px;
+  padding: 3px 10px;
+  font-size: .97rem;
+  border-radius: 5px;
+  border: none;
+  background: #7e46c5;
+  color: #fff;
+  font-family: 'Montserrat', Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.admin-cal-event button:hover {
+  background: #9f7ee6;
+}
+.admin-cal-edit-form {
+  margin-top: 6px;
+  background: #f7f8fc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px 0 rgba(80,90,110,0.09);
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+.admin-cal-edit-form label {
+  font-size: 0.98rem;
+  margin-bottom: 3px;
+}
+.admin-cal-edit-form input, .admin-cal-edit-form select {
+  margin-top: 3px;
+  margin-left: 5px;
+}
+
+.admin-cal-edit-form button {
+  margin-left: 5px;
+  margin-top: 2px;
+  padding: 3px 8px;
+}
+
+/* Admin add calendar event form */
+.admin-cal-form {
+  margin-top: 6px;
+  background: #f7f8fc;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(80,90,110,0.09);
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  align-items: center;
+  font-size: 1.01rem;
+}
+.admin-cal-form label {
+  margin-bottom: 3px;
+  font-size: 0.99rem;
+}
+.admin-cal-form input, .admin-cal-form select {
+  margin-left: 7px;
+  margin-top: 2px;
+  font-size: 1.01rem;
+}
+.admin-cal-form button {
+  margin-left: 10px;
+  padding: 7px 14px;
+  background: #8de7b5;
+  color: #1eae60;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.01rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.admin-cal-form button:hover {
+  background: #1eae60;
+  color: #fff;
+}
+
 @media (max-width: 1100px) {
   .calendar-grid { min-width: 650px; }
 }
