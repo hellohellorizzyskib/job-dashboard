@@ -270,8 +270,132 @@ body {
   background: linear-gradient(90deg, #7e46c5 10%, #c3a3fc 90%);
 }
 
+.admin-section {
+  margin-bottom: 30px;
+  background: #f7f8fa;
+  border-radius: 10px;
+  padding: 18px 18px 8px 18px;
+  box-shadow: 0 2px 8px 0 rgba(80,90,110,0.05);
+}
+
+#admin-workers-list .admin-worker-block {
+  margin-bottom: 10px;
+  background: #ede7f6;
+  border-radius: 8px;
+  padding: 10px 10px 8px 10px;
+  font-size: 1.01rem;
+}
+.admin-worker-block button {
+  margin-left: 5px;
+  margin-bottom: 5px;
+  padding: 3px 10px;
+  font-size: .97rem;
+  border-radius: 5px;
+  border: none;
+  background: #7e46c5;
+  color: #fff;
+  font-family: 'Montserrat', Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.admin-worker-block button:hover {
+  background: #9f7ee6;
+}
+.admin-worker-tasks {
+  font-size: 0.98rem;
+  margin-top: 3px;
+  margin-left: 12px;
+}
+.edit-worker-form {
+  margin-top: 3px;
+}
+.edit-worker-form label {
+  font-size: 0.97rem;
+  margin-bottom: 3px;
+}
+.edit-worker-form input {
+  margin-top: 3px;
+}
+.edit-worker-form button {
+  margin-top: 6px;
+  margin-right: 7px;
+  padding: 3px 10px;
+}
+
+#add-worker-form label {
+  font-size: 0.98rem;
+  margin-bottom: 3px;
+}
+#add-worker-form input {
+  margin-top: 3px;
+}
+#add-worker-form button {
+  margin-top: 7px;
+  margin-right: 7px;
+  padding: 4px 14px;
+}
+
+#admin-announcements-list {
+  margin-bottom: 7px;
+}
+#admin-announcements-list li {
+  margin-bottom: 7px;
+  font-size: 1.05rem;
+}
+#admin-announcements-list .delete-announcement-btn {
+  margin-left: 12px;
+  padding: 2px 9px;
+  border-radius: 5px;
+  border: none;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: .95rem;
+  background: #b32d2d;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+#admin-announcements-list .delete-announcement-btn:hover {
+  background: #e53935;
+}
+#admin-announcements-list .admin-announcement-text {
+  outline: none;
+  min-width: 120px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #fff;
+}
+#admin-announcements-list .admin-announcement-text:focus {
+  background: #f9f6fd;
+}
+
+#admin-new-announcement {
+  margin-top: 8px;
+  margin-bottom: 7px;
+  padding: 7px 9px;
+  border-radius: 5px;
+  border: 1px solid #c9d6e2;
+  font-size: 1.01rem;
+  background: #f8fafb;
+  width: 75%;
+}
+#admin-add-announcement-btn {
+  margin-left: 7px;
+  padding: 8px 14px;
+  border-radius: 5px;
+  border: none;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.01rem;
+  background: #2792c3;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+#admin-add-announcement-btn:hover {
+  background: #71c7ec;
+}
+
 #submissions-section {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #submissions-list {
@@ -286,13 +410,29 @@ body {
   margin-bottom: 18px;
   font-size: 1.01rem;
   font-family: 'Roboto', Arial, sans-serif;
+  position: relative;
 }
-
+.submission-block .delete-submission-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: none;
+  background: #b32d2d;
+  color: #fff;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: .96rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.submission-block .delete-submission-btn:hover {
+  background: #e53935;
+}
 .submission-block ul {
   margin: 8px 0 0 0;
   padding-left: 16px;
 }
-
 .submission-block li {
   margin-bottom: 5px;
 }
