@@ -504,58 +504,16 @@
           <h3 id="profile-name"></h3>
           <button id="profile-logout-btn" class="profile-logout-btn">Logout</button>
         </div>
-          <div class="profile-info">
+        <div class="profile-info">
+          <div><b>Schedule:</b> <span id="profile-schedule"></span></div>
+          <div><b>Lunch Break:</b> <span id="profile-lunch"></span></div>
           <div>
-            <b>Schedule:</b>
-            <span id="profile-schedule-display"></span>
-            <input type="text" id="profile-schedule-edit" class="hidden" style="font-size:.97em;">
-            <button id="edit-profile-schedule-btn" class="profile-field-edit-btn" title="Edit Shift" type="button">✏️</button>
-            <button id="save-profile-schedule-btn" class="profile-field-save-btn hidden" type="button">💾</button>
-            <button id="cancel-profile-schedule-btn" class="profile-field-cancel-btn hidden" type="button">✖️</button>
-          </div>
-          <div>
-            <b>Lunch Break:</b>
-            <span id="profile-lunch-display"></span>
-            <input type="text" id="profile-lunch-edit" class="hidden" style="font-size:.97em;">
-            <button id="edit-profile-lunch-btn" class="profile-field-edit-btn" title="Edit Lunch" type="button">✏️</button>
-            <button id="save-profile-lunch-btn" class="profile-field-save-btn hidden" type="button">💾</button>
-            <button id="cancel-profile-lunch-btn" class="profile-field-cancel-btn hidden" type="button">✖️</button>
-          </div>
-          <div>
-            <b>Experience:</b>
-            <span id="profile-experience-display"></span>
-            <textarea id="profile-experience-edit" class="hidden" style="width:98%;font-size:.97em;" rows="2"></textarea>
-            <button id="edit-profile-experience-btn" class="profile-field-edit-btn" title="Edit Experience" type="button">✏️</button>
-            <button id="save-profile-experience-btn" class="profile-field-save-btn hidden" type="button">💾</button>
-            <button id="cancel-profile-experience-btn" class="profile-field-cancel-btn hidden" type="button">✖️</button>
+            <b>Past Jobs:</b>
+            <ul id="profile-history-list"></ul>
           </div>
         </div>
-        <div>
-          <h4>Shift History</h4>
-          <div class="profile-history-scroll" id="profile-shift-history"></div>
-          <button id="add-shift-entry-btn" type="button" style="margin-top:8px;">Add Entry</button>
-        </div>
-        <div id="edit-shift-history-modal" class="hidden edit-shift-history-modal">
-          <div class="edit-shift-history-modal-content">
-            <h4>Edit Shift Entry</h4>
-            <form id="shift-history-edit-form">
-              <label>Date: <input type="date" id="shift-edit-date" required></label>
-              <label>Clock In: <input type="time" id="shift-edit-in"></label>
-              <label>Break Start: <input type="time" id="shift-edit-breakstart"></label>
-              <label>Break End: <input type="time" id="shift-edit-breakend"></label>
-              <label>Clock Out: <input type="time" id="shift-edit-out"></label>
-              <div style="margin-top:10px;">
-                <button type="submit">Save</button>
-                <button type="button" id="cancel-shift-edit-btn">Cancel</button>
-                <button type="button" id="delete-shift-edit-btn" style="float:right;background:#d32f2f;">Delete Entry</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div id="profile-message" class="form-message"></div>
-        <!-- Profile clock-in/out, break, and shift controls will be filled in JS -->
-        <div id="shift-control-block" style="margin-top:26px;">
-          <div><b>Today's Shift:</b> <span id="profile-current-shift"></span></div>
+        <div id="shift-control-block">
+          <div><b>Current Shift:</b> <span id="profile-current-shift"></span></div>
           <div class="shift-buttons">
             <button id="clock-in-btn">Clock In</button>
             <button id="start-break-btn" disabled>Start Break</button>
@@ -564,919 +522,748 @@
           </div>
           <div id="shift-status"></div>
         </div>
-      </div>
-    </div>
-    <!-- Calendar Section -->
-    <div class="details-section hidden" id="calendar-details">
-      <h2>Weekly Calendar</h2>
-      <div class="calendar-toolbar">
-        <button id="calendar-today-btn">Today</button>
-        <span class="calendar-week-label" id="calendar-week-label"></span>
-        <button id="calendar-prev-btn">&#8592;</button>
-        <button id="calendar-next-btn">&#8594;</button>
-      </div>
-      <div class="calendar-container" id="calendar-container">
-        <div class="calendar-grid" id="calendar-grid"></div>
-      </div>
-    </div>
-    <!-- Shifts Section -->
-    <div class="details-section hidden" id="shifts-details">
-      <h2>Shifts</h2>
-      <div class="shift-squares" id="shift-squares"></div>
-      <div class="profile-details" id="profile-details">
-        <h3>Click a profile to see shift details</h3>
-      </div>
-    </div>
-    <!-- Announcements Section -->
-    <div class="details-section hidden" id="announcements-details">
-      <h2>Announcements</h2>
-      <ul class="announcements-list" id="announcements-list"></ul>
-    </div>
-    <!-- Hire Section -->
-    <div class="details-section hidden" id="hire-details">
-      <h2>Apply for Hire</h2>
-      <form class="hire-form" id="hire-form">
-        <label>1. Full Name:<input type="text" name="name" required autocomplete="name"></label>
-        <label>2. Email Address:<input type="email" name="email" required autocomplete="email"></label>
-        <label>3. Phone Number:<input type="text" name="phone" required autocomplete="tel"></label>
-        <label>4. Why do you want this job?<textarea name="why" rows="2" required></textarea></label>
-        <label>5. What relevant experience do you have?<textarea name="experience" rows="2" required></textarea></label>
-        <label>6. What are your strengths?<textarea name="strengths" rows="2" required></textarea></label>
-        <label>7. What are your weaknesses?<textarea name="weaknesses" rows="2" required></textarea></label>
-        <label>8. What is your availability (days and times)?<input type="text" name="availability" required></label>
-        <label>9. Which shift would you prefer?
-          <select name="shift" required>
-            <option value="">Select...</option>
-            <option>Morning (6am-2pm)</option>
-            <option>Day (9am-5pm)</option>
-            <option>Evening (1pm-9pm)</option>
-          </select>
-        </label>
-        <label>10. Are you willing to work weekends?
-          <select name="weekends" required>
-            <option value="">Select...</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-            <option value="maybe">Maybe</option>
-          </select>
-        </label>
-        <label>11. Tell us about a time you overcame a challenge:<textarea name="challenge" rows="2" required></textarea></label>
-        <label>12. Emergency Contact Name & Number:<input type="text" name="emergency" required></label>
-        <button type="submit">Submit Application</button>
-        <div class="form-message" id="form-message"></div>
-      </form>
-    </div>
-    <!-- Admin Section -->
-    <div class="details-section hidden" id="admin-details">
-      <h2>Admin Access</h2>
-      <div id="admin-login">
-        <label>
-          Enter admin code:
-          <input type="password" id="admin-code" maxlength="32">
-        </label>
-        <button id="admin-login-btn">Login</button>
-        <div id="admin-login-message" style="color: #b32d2d; margin-top: 8px;"></div>
-      </div>
-      <div id="admin-panel" class="hidden">
-        <div class="admin-section">
-          <h3>Change Admin Code</h3>
-          <label>
-            New admin code:
-            <input type="password" id="new-admin-code">
-          </label>
-          <button id="change-admin-code-btn">Change Code</button>
-          <div id="admin-code-message" style="margin-top:8px;"></div>
-        </div>
-        <div class="admin-section">
-          <h3>Change Profile Passwords</h3>
-          <div id="admin-profile-passwords"></div>
-        </div>
-        <div class="admin-section">
-          <h3>Manage Workers</h3>
-          <div id="admin-workers-list"></div>
-          <button id="add-worker-btn">Add Worker</button>
-          <div id="add-worker-form" class="hidden">
-            <label>Name: <input type="text" id="new-worker-name"></label>
-            <label>Shift: <input type="text" id="new-worker-shift"></label>
-            <label>Tasks (comma separated): <input type="text" id="new-worker-tasks"></label>
-            <button id="save-new-worker-btn">Save Worker</button>
-            <button id="cancel-new-worker-btn">Cancel</button>
-          </div>
-        </div>
-        <div class="admin-section">
-          <h3>Manage Announcements</h3>
-          <ul id="admin-announcements-list"></ul>
-          <input type="text" id="admin-new-announcement" placeholder="Add announcement">
-          <button id="admin-add-announcement-btn">Add</button>
-        </div>
-        <div class="admin-section">
-          <h3>Manage Calendar</h3>
-          <div id="admin-calendar-list"></div>
-          <form id="admin-add-calendar-form" class="admin-cal-form">
-            <label>Title: <input type="text" id="admin-cal-title" required></label>
-            <label>Day:
-              <select id="admin-cal-day" required>
-                <option value="0">Monday</option>
-                <option value="1">Tuesday</option>
-                <option value="2">Wednesday</option>
-                <option value="3">Thursday</option>
-                <option value="4">Friday</option>
-                <option value="5">Saturday</option>
-                <option value="6">Sunday</option>
-              </select>
-            </label>
-            <label>Start Time:
-              <input type="time" id="admin-cal-start" min="06:00" max="21:00" required>
-            </label>
-            <label>End Time:
-              <input type="time" id="admin-cal-end" min="06:00" max="21:00" required>
-            </label>
-            <label>Color:
-              <input type="color" id="admin-cal-color" value="#ffb347" required>
-            </label>
-            <button type="submit">Add Event</button>
-          </form>
-        </div>
-        <div class="admin-section">
-          <h3>Manage Submissions</h3>
-          <div id="submissions-section">
-            <div id="submissions-list"></div>
-          </div>
-        </div>
-        <div class="admin-section">
-          <h3>Manage Profiles</h3>
-          <div id="admin-profiles-list"></div>
+        <div>
+          <b>Shift History</b>
+          <div class="profile-history-scroll" id="profile-shift-history"></div>
         </div>
       </div>
     </div>
   </div>
   <script>
-// ========== DATA STORAGE HELPERS ==========
-const defaultWorkers = [
-  { name: "John Doe", shift: "9:00 AM - 5:00 PM", tasks: [
-    "Front desk coverage from 9am-12pm",
-    "Inventory check at 2pm",
-    "Daily report submission by 4:30pm",
-    "Assist with onboarding new employees"
-  ]},
-  { name: "Jane Doe", shift: "1:00 PM - 9:00 PM", tasks: [
-    "Supervise afternoon crew",
-    "Prepare conference room for meetings",
-    "Coordinate with cleaning staff",
-    "Update task board at end of shift"
-  ]},
-  { name: "Bob Smith", shift: "6:00 AM - 2:00 PM", tasks: [
-    "Early morning inventory restock",
-    "Equipment maintenance at 9am",
-    "Handle supplier deliveries",
-    "Submit maintenance logs by 1:30pm"
-  ]}
-];
-function getWorkers() {
-  return JSON.parse(localStorage.getItem('workers') || JSON.stringify(defaultWorkers));
-}
-function setWorkers(workers) {
-  localStorage.setItem('workers', JSON.stringify(workers));
-}
+// ========== DATA HELPERS ==========
 
-const defaultAnnouncements = [
-  "Team lunch on Friday at 1pm in the main cafeteria.",
-  "Reminder: Submit weekly reports by Thursday 5pm.",
-  "Fire drill scheduled for next Monday at 10am."
-];
-function getAnnouncements() {
-  return JSON.parse(localStorage.getItem('announcements') || JSON.stringify(defaultAnnouncements));
-}
-function setAnnouncements(list) {
-  localStorage.setItem('announcements', JSON.stringify(list));
-}
-function getAdminCode() {
-  return localStorage.getItem('adminCode') || "1234";
-}
-function setAdminCode(newCode) {
-  localStorage.setItem('adminCode', newCode);
-}
-function getSubmissions() {
-  return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
-}
-function setSubmissions(subs) {
-  localStorage.setItem('hireSubmissions', JSON.stringify(subs));
-}
-function saveSubmission(data) {
-  const subs = getSubmissions();
-  subs.push(data);
-  setSubmissions(subs);
-}
-const defaultCalendarEvents = [
-  { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
-  { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
-  { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
-  { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
-  { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
-  { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
-];
-function getCalendarEvents() {
-  return JSON.parse(localStorage.getItem('calendarEvents') || JSON.stringify(defaultCalendarEvents));
-}
-function setCalendarEvents(events) {
-  localStorage.setItem('calendarEvents', JSON.stringify(events));
-}
-
-// =========== SHIFTS SECTION ===========
-function renderShiftSquares() {
-  const workers = getWorkers();
-  const shiftSquares = document.getElementById('shift-squares');
-  shiftSquares.innerHTML = '';
-  workers.forEach((worker, idx) => {
-    const colors = ['orange-gradient', 'blue-gradient', 'green-gradient', 'purple-gradient'];
-    const color = colors[idx % colors.length];
-    const div = document.createElement('div');
-    div.className = `shift-square ${color}`;
-    div.innerHTML = `<span>${worker.name}</span>`;
-    div.addEventListener('click', () => {
-      renderProfileDetails(worker);
-    });
-    shiftSquares.appendChild(div);
-  });
-}
-function renderProfileDetails(worker) {
-  const profileDetails = document.getElementById('profile-details');
-  profileDetails.innerHTML = `
-    <h3>${worker.name}</h3>
-    <p><strong>Shift:</strong> ${worker.shift}</p>
-    <ul>
-      ${worker.tasks.map(task => `<li>${task}</li>`).join('')}
-    </ul>
-  `;
-}
-
-// =========== ANNOUNCEMENTS ===========
-function renderAnnouncements() {
-  const list = getAnnouncements();
-  const annList = document.getElementById('announcements-list');
-  annList.innerHTML = '';
-  list.forEach(a => {
-    const li = document.createElement('li');
-    li.textContent = a;
-    annList.appendChild(li);
-  });
-}
-
-// =========== ADMIN ANNOUNCEMENTS ===========
-function renderAdminAnnouncements() {
-  const list = getAnnouncements();
-  const annList = document.getElementById('admin-announcements-list');
-  annList.innerHTML = '';
-  list.forEach((a, i) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span class="admin-announcement-text" contenteditable="true" data-idx="${i}">${a}</span>
-      <button class="delete-announcement-btn" data-idx="${i}">Delete</button>
-    `;
-    annList.appendChild(li);
-  });
-}
-
-// =========== ADMIN WORKERS ===========
-function renderAdminWorkers() {
-  const workers = getWorkers();
-  const div = document.getElementById('admin-workers-list');
-  div.innerHTML = '';
-  workers.forEach((worker, idx) => {
-    const workerDiv = document.createElement('div');
-    workerDiv.className = "admin-worker-block";
-    workerDiv.innerHTML = `
-      <b>${worker.name}</b> (<span>${worker.shift}</span>)
-      <button class="edit-worker-btn" data-idx="${idx}">Edit</button>
-      <button class="delete-worker-btn" data-idx="${idx}">Delete</button>
-      <div class="admin-worker-tasks"><ul>${worker.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>
-      <div class="edit-worker-form hidden" id="edit-worker-form-${idx}">
-        <label>Name: <input type="text" value="${worker.name}" class="edit-worker-name"></label>
-        <label>Shift: <input type="text" value="${worker.shift}" class="edit-worker-shift"></label>
-        <label>Tasks (comma separated): <input type="text" value="${worker.tasks.join(', ')}" class="edit-worker-tasks-input"></label>
-        <button class="save-edit-worker-btn" data-idx="${idx}">Save</button>
-        <button class="cancel-edit-worker-btn" data-idx="${idx}">Cancel</button>
-      </div>
-    `;
-    div.appendChild(workerDiv);
-  });
-}
-
-// =========== ADMIN SUBMISSIONS ===========
-function renderAdminSubmissions() {
-  const subs = getSubmissions();
-  const list = document.getElementById('submissions-list');
-  if(subs.length === 0) {
-    list.innerHTML = "<em>No submissions yet.</em>";
-    return;
-  }
-  list.innerHTML = subs.map((s, i) => `
-    <div class="submission-block">
-      <strong>Application #${i+1}</strong>
-      <button class="delete-submission-btn" data-idx="${i}">Delete</button>
-      <ul>
-        <li><b>Full Name:</b> ${s.name}</li>
-        <li><b>Email:</b> ${s.email}</li>
-        <li><b>Phone:</b> ${s.phone}</li>
-        <li><b>Why do you want this job?</b> ${s.why}</li>
-        <li><b>Relevant experience:</b> ${s.experience}</li>
-        <li><b>Strengths:</b> ${s.strengths}</li>
-        <li><b>Weaknesses:</b> ${s.weaknesses}</li>
-        <li><b>Availability:</b> ${s.availability}</li>
-        <li><b>Preferred shift:</b> ${s.shift}</li>
-        <li><b>Willing to work weekends:</b> ${s.weekends}</li>
-        <li><b>Challenge overcome:</b> ${s.challenge}</li>
-        <li><b>Emergency contact:</b> ${s.emergency}</li>
-      </ul>
-    </div>
-  `).join("");
-}
-
-// =========== ADMIN PROFILES MANAGEMENT ===========
-function renderAdminProfiles() {
-  const profiles = getProfiles();
-  const container = document.getElementById('admin-profiles-list');
-  if (!container) return;
-  if (Object.keys(profiles).length === 0) {
-    container.innerHTML = "<em>No user profiles found.</em>";
-    return;
-  }
-  container.innerHTML = Object.entries(profiles).map(([key, profile]) => `
-    <div class="admin-worker-block" style="margin-bottom:20px;">
-      <b>User:</b> <span>${profile.username}</span>
-      <button onclick="editAdminProfile('${key}')">Edit</button>
-      <button onclick="deleteAdminProfile('${key}')">Delete User</button>
-      <div id="admin-profile-edit-${key}" class="hidden" style="margin:12px 0;">
-        <label>Name: <input type="text" id="admin-edit-name-${key}" value="${profile.name}"></label>
-        <label>Username: <input type="text" id="admin-edit-username-${key}" value="${profile.username}"></label>
-        <label>Password: <input type="text" id="admin-edit-password-${key}" value="${profile.password}"></label>
-        <label>Schedule: <input type="text" id="admin-edit-schedule-${key}" value="${profile.schedule || ""}"></label>
-        <label>Lunch: <input type="text" id="admin-edit-lunch-${key}" value="${profile.lunch || ""}"></label>
-        <label>Experience: <textarea id="admin-edit-experience-${key}">${profile.experience || ""}</textarea></label>
-        <label>Jobs (JSON): <textarea id="admin-edit-jobs-${key}" rows="2">${JSON.stringify(profile.jobs || [])}</textarea></label>
-        <button onclick="saveAdminProfile('${key}')">Save</button>
-        <button onclick="cancelAdminProfileEdit('${key}')">Cancel</button>
-        <h5>Shift History:</h5>
-        <div>${(profile.history && profile.history.length>0) ? profile.history.map((s, i) =>
-          `<div style='background:#e6fefb;margin-bottom:7px;border-radius:6px;padding:6px 10px;'>
-            <b>${s.date || "-"}:</b> 
-            <span>In: ${s.clockIn || "-"}, Break: ${s.breakStart || "-"} - ${s.breakEnd || "-"}, Out: ${s.clockOut || "-"}</span>
-            <button onclick="deleteAdminProfileShift('${key}',${i})" style="float:right;background:#cf222e;color:#fff;">Delete</button>
-          </div>`
-        ).join("") : "<em>No shift history</em>"}</div>
-      </div>
-    </div>
-  `).join('');
-}
-window.editAdminProfile = function(key) {
-  document.getElementById(`admin-profile-edit-${key}`).classList.remove('hidden');
-};
-window.cancelAdminProfileEdit = function(key) {
-  document.getElementById(`admin-profile-edit-${key}`).classList.add('hidden');
-};
-window.saveAdminProfile = function(key) {
-  const profiles = getProfiles();
-  // Old and potentially new username
-  const oldKey = key;
-  const newUsername = document.getElementById(`admin-edit-username-${key}`).value.trim();
-  // If username changed, we must change the object key
-  let newKey = oldKey;
-  if (newUsername && newUsername !== profiles[oldKey].username) {
-    newKey = newUsername;
-    if (profiles[newKey]) {
-      alert("This username is already taken.");
-      return;
-    }
-    profiles[newKey] = {...profiles[oldKey]};
-    delete profiles[oldKey];
-  }
-  profiles[newKey].username = newUsername;
-  profiles[newKey].name = document.getElementById(`admin-edit-name-${key}`).value.trim();
-  profiles[newKey].password = document.getElementById(`admin-edit-password-${key}`).value;
-  profiles[newKey].schedule = document.getElementById(`admin-edit-schedule-${key}`).value;
-  profiles[newKey].lunch = document.getElementById(`admin-edit-lunch-${key}`).value;
-  profiles[newKey].experience = document.getElementById(`admin-edit-experience-${key}`).value;
-  try {
-    profiles[newKey].jobs = JSON.parse(document.getElementById(`admin-edit-jobs-${key}`).value || "[]");
-  } catch(e) {
-    alert("Jobs must be a valid JSON array.");
-    return;
-  }
-  setProfiles(profiles);
-  renderAdminProfiles();
-};
-window.deleteAdminProfile = function(key) {
-  if (!confirm("Delete this user and all their data?")) return;
-  const profiles = getProfiles();
-  delete profiles[key];
-  setProfiles(profiles);
-  renderAdminProfiles();
-};
-window.deleteAdminProfileShift = function(key, i) {
-  const profiles = getProfiles();
-  if (!profiles[key] || !profiles[key].history) return;
-  profiles[key].history.splice(i, 1);
-  setProfiles(profiles);
-  renderAdminProfiles();
-};
-// ========== PROFILE DATA & LOGIC ==========
-
-const defaultProfiles = {
-  john: {
-    username: "john",
-    password: "johnpass",
-    name: "John Doe",
-    schedule: "Mon-Fri, 9:00 AM - 5:00 PM",
-    lunch: "12:30 PM - 1:00 PM",
-    experience: "Front desk, Inventory, Customer Service",
-    jobs: [
-      { title: "Front Desk Clerk", duration: "2 yrs", hours: "9am-5pm", lunch: "12:30-1:00" }
-    ],
-    history: []
-  },
-  jane: {
-    username: "jane",
-    password: "janepass",
-    name: "Jane Doe",
-    schedule: "Tue-Sat, 1:00 PM - 9:00 PM",
-    lunch: "5:00 PM - 5:30 PM",
-    experience: "Supervisor, Staff Trainer",
-    jobs: [
-      { title: "Supervisor", duration: "3 yrs", hours: "1pm-9pm", lunch: "5:00-5:30" }
-    ],
-    history: []
-  },
-  bob: {
-    username: "bob",
-    password: "bobpass",
-    name: "Bob Smith",
-    schedule: "Mon-Fri, 6:00 AM - 2:00 PM",
-    lunch: "10:00 AM - 10:30 AM",
-    experience: "Maintenance, Deliveries",
-    jobs: [
-      { title: "Maintenance", duration: "4 yrs", hours: "6am-2pm", lunch: "10:00-10:30" }
-    ],
-    history: []
-  }
-};
 function getProfiles() {
-  return JSON.parse(localStorage.getItem('profiles') || JSON.stringify(defaultProfiles));
+  return JSON.parse(localStorage.getItem("profiles") || '{}');
 }
 function setProfiles(profiles) {
-  localStorage.setItem('profiles', JSON.stringify(profiles));
+  localStorage.setItem("profiles", JSON.stringify(profiles));
 }
-function getProfileByUsername(username) {
-  const profiles = getProfiles();
-  for (const key in profiles) {
-    if (profiles[key].username === username) return {key, ...profiles[key]};
+function getWorkers() {
+  return JSON.parse(localStorage.getItem("workers") || '[]');
+}
+function setWorkers(workers) {
+  localStorage.setItem("workers", JSON.stringify(workers));
+}
+function getAnnouncements() {
+  return JSON.parse(localStorage.getItem("announcements") || '[]');
+}
+function setAnnouncements(announcements) {
+  localStorage.setItem("announcements", JSON.stringify(announcements));
+}
+function getCalendarEvents() {
+  return JSON.parse(localStorage.getItem("calendarEvents") || '[]');
+}
+function setCalendarEvents(events) {
+  localStorage.setItem("calendarEvents", JSON.stringify(events));
+}
+function getAdminCode() {
+  return localStorage.getItem("adminCode") || "admin123";
+}
+function setAdminCode(code) {
+  localStorage.setItem("adminCode", code);
+}
+function getSubmissions() {
+  return JSON.parse(localStorage.getItem("submissions") || '[]');
+}
+function setSubmissions(subs) {
+  localStorage.setItem("submissions", JSON.stringify(subs));
+}
+
+// ========== INITIAL DEMO DATA (ON FIRST LOAD) ==========
+
+if (!localStorage.getItem("INITIALIZED")) {
+  // Demo workers
+  setWorkers([
+    { name: "John Doe", shift: "9:00 - 17:00", tasks: ["Inventory", "Cashier"] },
+    { name: "Jane Smith", shift: "13:00 - 21:00", tasks: ["Stock", "Customer Support"] }
+  ]);
+  // Demo profiles
+  setProfiles({
+    john: {
+      username: "john",
+      name: "John Doe",
+      schedule: "Mon-Fri 9:00 - 17:00",
+      lunch: "12:00-12:30",
+      password: "johnpass",
+      jobs: [
+        { title: "Inventory", duration: "3mo", hours: "120", lunch: "yes" },
+        { title: "Cashier", duration: "8mo", hours: "320", lunch: "yes" }
+      ],
+      history: [
+        { date: "2025-06-01", clockIn: "09:01", clockOut: "17:00" },
+        { date: "2025-06-02", clockIn: "09:00", clockOut: "17:12" }
+      ]
+    },
+    jane: {
+      username: "jane",
+      name: "Jane Smith",
+      schedule: "Mon-Fri 13:00 - 21:00",
+      lunch: "16:00-16:30",
+      password: "janepass",
+      jobs: [
+        { title: "Stock", duration: "2mo", hours: "80", lunch: "yes" }
+      ],
+      history: [
+        { date: "2025-06-01", clockIn: "13:05", clockOut: "20:59" }
+      ]
+    }
+  });
+  // Demo announcements
+  setAnnouncements([
+    "Staff meeting Friday at 4pm.",
+    "Remember to submit time sheets by Monday."
+  ]);
+  // Demo calendar events
+  setCalendarEvents([
+    { id: 1, title: "Morning Shift", day: 0, start: "09:00", end: "13:00", color: "#ffb347" },
+    { id: 2, title: "Afternoon Shift", day: 0, start: "13:00", end: "17:00", color: "#71c7ec" }
+  ]);
+  setAdminCode("admin123");
+  setSubmissions([]);
+  localStorage.setItem("INITIALIZED", "yes");
+}
+
+// ========== MENU NAVIGATION ==========
+
+const sectionIDs = [
+  "shifts-details","announcements-details","hire-details",
+  "calendar-details","admin-details","profile-details-section"
+];
+const squareIDs = [
+  "shifts-square","announcements-square","hire-square",
+  "calendar-square","admin-square","profile-square"
+];
+squareIDs.forEach((id, idx) => {
+  document.getElementById(id).onclick = () => {
+    sectionIDs.forEach((sec,i) => {
+      document.getElementById(sec).classList.toggle("hidden", i!==idx);
+    });
+    // Deselect all squares, select this
+    squareIDs.forEach(sid => document.getElementById(sid).classList.remove("selected"));
+    document.getElementById(id).classList.add("selected");
+    // Render when showing
+    if(secIDs[idx]==="shifts-details") renderWorkers();
+    if(secIDs[idx]==="announcements-details") renderAnnouncements();
+    if(secIDs[idx]==="calendar-details") renderCalendar();
+    if(secIDs[idx]==="profile-details-section") renderProfileLogin();
+    if(secIDs[idx]==="admin-details") showAdminLoginOrPanel();
+  };
+});
+const secIDs = sectionIDs; // alias for brevity
+
+// ========== SHIFTS & WORKERS ==========
+
+function renderWorkers() {
+  const workers = getWorkers();
+  const el = document.getElementById('shift-squares');
+  el.innerHTML = '';
+  workers.forEach((w,i) => {
+    const div = document.createElement("div");
+    div.className = "shift-square";
+    div.innerHTML = `<b>${w.name}</b><br><span style="font-weight:400;">${w.shift}</span>`;
+    div.onclick = () => renderWorkerDetails(w);
+    el.appendChild(div);
+  });
+  document.getElementById("profile-details").innerHTML = "<h3>Click a profile to see shift details</h3>";
+}
+function renderWorkerDetails(worker) {
+  const el = document.getElementById("profile-details");
+  el.innerHTML = `<div>
+    <h3>${worker.name}</h3>
+    <div><b>Shift:</b> ${worker.shift}</div>
+    <div><b>Tasks:</b> ${worker.tasks.join(", ")}</div>
+  </div>`;
+}
+
+// ========== ANNOUNCEMENTS ==========
+
+function renderAnnouncements() {
+  const ann = getAnnouncements();
+  const ul = document.getElementById("announcements-list");
+  ul.innerHTML = ann.map(a=>`<li>${a}</li>`).join('');
+}
+
+// ========== HIRE FORM ==========
+
+document.getElementById("hire-form").onsubmit = function(e){
+  e.preventDefault();
+  const sub = {};
+  Array.from(this.elements).forEach(f=>{
+    if(f.name) sub[f.name]=f.value;
+  });
+  const subs = getSubmissions();
+  subs.push(sub);
+  setSubmissions(subs);
+  document.getElementById("form-message").textContent = "Thank you! Application submitted.";
+  this.reset();
+  setTimeout(()=>{document.getElementById("form-message").textContent="";},1500);
+}
+
+// ========== CALENDAR ==========
+
+let calendarBaseDate = null; // Monday of displayed week
+
+function getMonday(d) {
+  d = new Date(d);
+  const day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6:1);
+  return new Date(d.setDate(diff));
+}
+function renderCalendar(baseDate) {
+  if(!baseDate) baseDate = getMonday(new Date());
+  calendarBaseDate = baseDate;
+  const week = [];
+  for(let i=0;i<7;i++) {
+    const d = new Date(baseDate);
+    d.setDate(baseDate.getDate()+i);
+    week.push(d);
   }
-  return null;
+  document.getElementById("calendar-week-label").textContent =
+    week[0].toDateString() + " - " + week[6].toDateString();
+  const grid = document.getElementById("calendar-grid");
+  const events = getCalendarEvents();
+  // Header
+  let html = `<div class="cal-row cal-header">
+    <div class="cal-cell cal-time"></div>
+    ${week.map(d=>`<div class="cal-cell">${d.toLocaleDateString('en-US', {weekday:'short'})}<br>${d.getMonth()+1}/${d.getDate()}</div>`).join('')}
+  </div>`;
+  // 14 time slots 7:00-20:00
+  for(let h=7;h<21;h++) {
+    html += `<div class="cal-row">
+      <div class="cal-cell cal-time">${h}:00</div>
+      ${week.map((d,dayIdx)=>{
+        const evs = events.filter(ev=>ev.day==dayIdx && +ev.start.split(":")[0]<=h && +ev.end.split(":")[0]>h);
+        return `<div class="cal-cell" style="position:relative;">${
+          evs.map(ev=>`<div class="cal-event-block" style="background:${ev.color}">${ev.title} (${ev.start}-${ev.end})</div>`).join('')
+        }</div>`;
+      }).join('')}
+    </div>`;
+  }
+  grid.innerHTML = html;
 }
-function updateProfileHistory(profileKey, shift) {
-  const profiles = getProfiles();
-  profiles[profileKey].history.unshift(shift);
-  setProfiles(profiles);
-}
+document.getElementById("calendar-prev-btn").onclick = ()=>{
+  calendarBaseDate.setDate(calendarBaseDate.getDate()-7);
+  renderCalendar(calendarBaseDate);
+};
+document.getElementById("calendar-next-btn").onclick = ()=>{
+  calendarBaseDate.setDate(calendarBaseDate.getDate()+7);
+  renderCalendar(calendarBaseDate);
+};
+document.getElementById("calendar-today-btn").onclick = ()=>{
+  renderCalendar(getMonday(new Date()));
+};
+
+// ========== PROFILE LOGIN & MAIN SECTION ==========
+
 let currentProfileKey = null;
-let currentShift = null;
-function showProfileLogin() {
-  document.getElementById('profile-login-section').classList.remove('hidden');
-  document.getElementById('profile-main-section').classList.add('hidden');
-  document.getElementById('profile-login-username').value = '';
-  document.getElementById('profile-login-password').value = '';
-  document.getElementById('profile-login-message').textContent = '';
-  currentProfileKey = null;
-  currentShift = null;
+function renderProfileLogin(){
+  document.getElementById("profile-login-section").classList.remove("hidden");
+  document.getElementById("profile-main-section").classList.add("hidden");
+  document.getElementById("profile-login-form").reset();
+  document.getElementById("profile-login-message").textContent = "";
 }
-function showProfileMain(profileKey) {
-  currentProfileKey = profileKey;
+document.getElementById("profile-login-form").onsubmit = function(e){
+  e.preventDefault();
+  const uname = document.getElementById("profile-login-username").value.trim();
+  const pass = document.getElementById("profile-login-password").value;
   const profiles = getProfiles();
-  const profile = profiles[profileKey];
-  // Name
-  document.getElementById('profile-name-display').textContent = profile.name || "";
-  document.getElementById('profile-name-edit').value = profile.name || "";
-  // Schedule
-  document.getElementById('profile-schedule-display').textContent = profile.schedule || "";
-  document.getElementById('profile-schedule-edit').value = profile.schedule || "";
-  // Lunch
-  document.getElementById('profile-lunch-display').textContent = profile.lunch || "";
-  document.getElementById('profile-lunch-edit').value = profile.lunch || "";
-  // Experience
-  document.getElementById('profile-experience-display').textContent = profile.experience || "";
-  document.getElementById('profile-experience-edit').value = profile.experience || "";
-  // Current shift (show schedule)
-  document.getElementById('profile-current-shift').textContent = profile.schedule || "-";
-  // History
-  renderShiftHistory(profileKey);
-  document.getElementById('profile-login-section').classList.add('hidden');
-  document.getElementById('profile-main-section').classList.remove('hidden');
-  document.getElementById('profile-message').textContent = '';
-  // Reset clock-in/out/break buttons
-  document.getElementById('clock-in-btn').disabled = false;
-  document.getElementById('start-break-btn').disabled = true;
-  document.getElementById('end-break-btn').disabled = true;
-  document.getElementById('clock-out-btn').disabled = true;
-  document.getElementById('shift-status').textContent = '';
-  currentShift = null;
-}
-function renderShiftHistory(profileKey) {
-  const profiles = getProfiles();
-  const shifts = profiles[profileKey]?.history || [];
-  const cont = document.getElementById('profile-shift-history');
-  if(!cont) return;
-  if(!shifts || shifts.length === 0) {
-    cont.innerHTML = "<em>No shifts yet.</em>";
-    return;
+  for(const key in profiles) {
+    if(profiles[key].username===uname && profiles[key].password===pass) {
+      currentProfileKey = key;
+      renderProfileMain();
+      return;
+    }
   }
-  cont.innerHTML = shifts.map((s,i) => `
-    <div class="shift-history-block">
-      <b>Shift #${shifts.length-i}</b> (${s.date})
-      <ul>
-        <li><b>Clocked In:</b> ${s.clockIn || "-"}</li>
-        <li><b>Break Start:</b> ${s.breakStart || "-"}</li>
-        <li><b>Break End:</b> ${s.breakEnd || "-"}</li>
-        <li><b>Clocked Out:</b> ${s.clockOut || "-"}</li>
-      </ul>
-      <button class="edit-shift-history-btn" data-idx="${i}" style="margin-top:3px;">Edit</button>
+  document.getElementById("profile-login-message").textContent = "Invalid credentials.";
+};
+function renderProfileMain(){
+  const profile = getProfiles()[currentProfileKey];
+  document.getElementById("profile-login-section").classList.add("hidden");
+  document.getElementById("profile-main-section").classList.remove("hidden");
+  document.getElementById("profile-name").textContent = profile.name;
+  document.getElementById("profile-schedule").textContent = profile.schedule||"-";
+  document.getElementById("profile-lunch").textContent = profile.lunch||"-";
+  // Past jobs
+  document.getElementById("profile-history-list").innerHTML = 
+    (profile.jobs||[]).map(j=>`<li>${j.title||""} (${j.duration||""}, hours: ${j.hours||"-"}, lunch: ${j.lunch||"-"})</li>`).join('');
+  // Shift history
+  renderProfileShiftHistory();
+  document.getElementById("profile-current-shift").textContent = "- (not implemented)";
+  document.getElementById("shift-status").textContent = "";
+  // Buttons (for demo, only clock-in enabled)
+  document.getElementById("clock-in-btn").disabled = false;
+  document.getElementById("start-break-btn").disabled = true;
+  document.getElementById("end-break-btn").disabled = true;
+  document.getElementById("clock-out-btn").disabled = true;
+}
+function renderProfileShiftHistory(){
+  const profile = getProfiles()[currentProfileKey];
+  const div = document.getElementById("profile-shift-history");
+  div.innerHTML = (profile.history||[]).slice(-10).reverse().map(h=>
+    `<div class="shift-history-block">
+      <b>${h.date}</b>: ${h.clockIn||"-"} — ${h.clockOut||"-"}
+    </div>`).join('');
+}
+document.getElementById("profile-logout-btn").onclick = function(){
+  currentProfileKey = null;
+  renderProfileLogin();
+};
+
+// ========== ADMIN PANEL & CRUD FOR PROFILES ==========
+
+function showAdminLoginOrPanel(){
+  if(localStorage.getItem("ADMIN_LOGGED_IN")==="yes"){
+    document.getElementById("admin-login").classList.add("hidden");
+    document.getElementById("admin-panel").classList.remove("hidden");
+    renderAdminWorkers();
+    renderAdminAnnouncements();
+    renderAdminCalendar();
+    renderAdminSubmissions();
+    renderAdminProfilePasswords();
+  } else {
+    document.getElementById("admin-login").classList.remove("hidden");
+    document.getElementById("admin-panel").classList.add("hidden");
+  }
+}
+document.getElementById("admin-login-btn").onclick = function(){
+  const code = document.getElementById("admin-code").value;
+  if(code===getAdminCode()){
+    localStorage.setItem("ADMIN_LOGGED_IN","yes");
+    showAdminLoginOrPanel();
+    document.getElementById("admin-login-message").textContent = "";
+  } else {
+    document.getElementById("admin-login-message").textContent = "Invalid!";
+  }
+};
+function adminLogout(){
+  localStorage.removeItem("ADMIN_LOGGED_IN");
+  showAdminLoginOrPanel();
+}
+document.getElementById("profile-logout-btn").onclick = adminLogout;
+
+function renderAdminWorkers() {
+  const workers = getWorkers();
+  const el = document.getElementById("admin-workers-list");
+  el.innerHTML = workers.map((w,i)=>`
+    <div class="admin-worker-block">
+      <b>${w.name}</b> — Shift: ${w.shift}
+      <div class="admin-worker-tasks">Tasks: ${(w.tasks||[]).join(", ")}</div>
+      <button class="edit-worker-btn" data-i="${i}">Edit</button>
+      <button class="delete-worker-btn" data-i="${i}">Delete</button>
     </div>
   `).join('');
-  Array.from(cont.querySelectorAll('.edit-shift-history-btn')).forEach(btn => {
-    btn.onclick = ()=>startEditShiftHistory(parseInt(btn.dataset.idx,10));
-  });
 }
-function saveCurrentProfileField(field, value) {
-  if (!currentProfileKey) return;
-  const profiles = getProfiles();
-  profiles[currentProfileKey][field] = value;
-  setProfiles(profiles);
-}
-// Profile login form
-document.getElementById('profile-login-form').onsubmit = function(e) {
-  e.preventDefault();
-  const username = document.getElementById('profile-login-username').value.trim();
-  const password = document.getElementById('profile-login-password').value;
-  const profileObj = getProfileByUsername(username);
-  if (profileObj && profileObj.password === password) {
-    showProfileMain(profileObj.key);
-  } else {
-    document.getElementById('profile-login-message').textContent = "Invalid username or password.";
-  }
+document.getElementById("add-worker-btn").onclick = function(){
+  document.getElementById("add-worker-form").classList.remove("hidden");
 };
-document.getElementById('profile-logout-btn').onclick = showProfileLogin;
-// Profile field edit/save/cancel logic
-function enableEdit(field) {
-  document.getElementById(`profile-${field}-display`).classList.add('hidden');
-  document.getElementById(`profile-${field}-edit`).classList.remove('hidden');
-  document.getElementById(`edit-profile-${field}-btn`).classList.add('hidden');
-  document.getElementById(`save-profile-${field}-btn`).classList.remove('hidden');
-  document.getElementById(`cancel-profile-${field}-btn`).classList.remove('hidden');
-}
-function disableEdit(field) {
-  document.getElementById(`profile-${field}-display`).classList.remove('hidden');
-  document.getElementById(`profile-${field}-edit`).classList.add('hidden');
-  document.getElementById(`edit-profile-${field}-btn`).classList.remove('hidden');
-  document.getElementById(`save-profile-${field}-btn`).classList.add('hidden');
-  document.getElementById(`cancel-profile-${field}-btn`).classList.add('hidden');
-}
-function saveField(field) {
-  let value;
-  if(field==="experience") {
-    value = document.getElementById(`profile-${field}-edit`).value;
-    document.getElementById(`profile-${field}-display`).textContent = value;
-  } else {
-    value = document.getElementById(`profile-${field}-edit`).value;
-    document.getElementById(`profile-${field}-display`).textContent = value;
-  }
-  saveCurrentProfileField(field, value);
-  disableEdit(field);
-  document.getElementById('profile-message').textContent = "Saved!";
-  setTimeout(()=>document.getElementById('profile-message').textContent="", 1200);
-}
-['name','schedule','lunch','experience'].forEach(field => {
-  document.getElementById(`edit-profile-${field}-btn`).onclick = ()=>enableEdit(field);
-  document.getElementById(`cancel-profile-${field}-btn`).onclick = ()=>disableEdit(field);
-  document.getElementById(`save-profile-${field}-btn`).onclick = ()=>saveField(field);
-});
-// Shift history editing
-let editingShiftIdx = null;
-function startEditShiftHistory(idx) {
-  editingShiftIdx = idx;
-  const profiles = getProfiles();
-  const hist = profiles[currentProfileKey]?.history || [];
-  const shift = hist[idx];
-  document.getElementById('shift-edit-date').value = shift.date ? shift.date.split("T")[0] : "";
-  document.getElementById('shift-edit-in').value = shift.clockIn || "";
-  document.getElementById('shift-edit-breakstart').value = shift.breakStart || "";
-  document.getElementById('shift-edit-breakend').value = shift.breakEnd || "";
-  document.getElementById('shift-edit-out').value = shift.clockOut || "";
-  document.getElementById('edit-shift-history-modal').classList.remove('hidden');
-}
-document.getElementById('cancel-shift-edit-btn').onclick = function() {
-  document.getElementById('edit-shift-history-modal').classList.add('hidden');
-  editingShiftIdx = null;
+document.getElementById("cancel-new-worker-btn").onclick = function(){
+  document.getElementById("add-worker-form").classList.add("hidden");
 };
-document.getElementById('delete-shift-edit-btn').onclick = function() {
-  if(editingShiftIdx==null) return;
-  if(!confirm("Delete this shift entry?")) return;
-  const profiles = getProfiles();
-  profiles[currentProfileKey].history.splice(editingShiftIdx,1);
-  setProfiles(profiles);
-  renderShiftHistory(currentProfileKey);
-  document.getElementById('edit-shift-history-modal').classList.add('hidden');
-  editingShiftIdx = null;
-};
-document.getElementById('shift-history-edit-form').onsubmit = function(e) {
-  e.preventDefault();
-  if(editingShiftIdx==null) return;
-  const profiles = getProfiles();
-  profiles[currentProfileKey].history[editingShiftIdx] = {
-    date: document.getElementById('shift-edit-date').value,
-    clockIn: document.getElementById('shift-edit-in').value,
-    breakStart: document.getElementById('shift-edit-breakstart').value,
-    breakEnd: document.getElementById('shift-edit-breakend').value,
-    clockOut: document.getElementById('shift-edit-out').value
-  };
-  setProfiles(profiles);
-  renderShiftHistory(currentProfileKey);
-  document.getElementById('edit-shift-history-modal').classList.add('hidden');
-  editingShiftIdx = null;
-};
-document.getElementById('add-shift-entry-btn').onclick = function() {
-  editingShiftIdx = null;
-  document.getElementById('shift-edit-date').value = "";
-  document.getElementById('shift-edit-in').value = "";
-  document.getElementById('shift-edit-breakstart').value = "";
-  document.getElementById('shift-edit-breakend').value = "";
-  document.getElementById('shift-edit-out').value = "";
-  document.getElementById('edit-shift-history-modal').classList.remove('hidden');
-  document.getElementById('shift-history-edit-form').onsubmit = function(e) {
-    e.preventDefault();
-    const profiles = getProfiles();
-    const newEntry = {
-      date: document.getElementById('shift-edit-date').value,
-      clockIn: document.getElementById('shift-edit-in').value,
-      breakStart: document.getElementById('shift-edit-breakstart').value,
-      breakEnd: document.getElementById('shift-edit-breakend').value,
-      clockOut: document.getElementById('shift-edit-out').value
-    };
-    profiles[currentProfileKey].history.unshift(newEntry);
-    setProfiles(profiles);
-    renderShiftHistory(currentProfileKey);
-    document.getElementById('edit-shift-history-modal').classList.add('hidden');
-  };
-  document.getElementById('delete-shift-edit-btn').onclick = function() {
-    document.getElementById('edit-shift-history-modal').classList.add('hidden');
-  }
-};
-// Profile clock-in/out/break/shift logic
-document.getElementById('clock-in-btn').onclick = function() {
-  if(currentShift) return;
-  const now = new Date();
-  currentShift = {
-    date: now.toLocaleDateString(),
-    clockIn: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    breakStart: null,
-    breakEnd: null,
-    clockOut: null
-  };
-  this.disabled = true;
-  document.getElementById('start-break-btn').disabled = false;
-  document.getElementById('end-break-btn').disabled = true;
-  document.getElementById('clock-out-btn').disabled = false;
-  document.getElementById('shift-status').textContent = "Shift started at " + currentShift.clockIn;
-};
-document.getElementById('start-break-btn').onclick = function() {
-  if(!currentShift || currentShift.breakStart) return;
-  const now = new Date();
-  currentShift.breakStart = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  this.disabled = true;
-  document.getElementById('end-break-btn').disabled = false;
-  document.getElementById('shift-status').textContent = "Break started at " + currentShift.breakStart;
-};
-document.getElementById('end-break-btn').onclick = function() {
-  if(!currentShift || !currentShift.breakStart || currentShift.breakEnd) return;
-  const now = new Date();
-  currentShift.breakEnd = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  this.disabled = true;
-  document.getElementById('shift-status').textContent = "Break ended at " + currentShift.breakEnd;
-};
-document.getElementById('clock-out-btn').onclick = function() {
-  if(!currentShift || currentShift.clockOut) return;
-  const now = new Date();
-  currentShift.clockOut = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  updateProfileHistory(currentProfileKey, currentShift);
-  renderShiftHistory(currentProfileKey);
-  document.getElementById('clock-in-btn').disabled = false;
-  document.getElementById('start-break-btn').disabled = true;
-  document.getElementById('end-break-btn').disabled = true;
-  this.disabled = true;
-  document.getElementById('shift-status').textContent = "Clocked out at " + currentShift.clockOut + ". Shift saved!";
-  currentShift = null;
-};
-
-// ========== NAVIGATION ==========
-function hideAllDetails() {
-  [
-    "shifts-details", "announcements-details", "hire-details", 
-    "admin-details", "calendar-details", "profile-details-section"
-  ].forEach(id => {
-    var e = document.getElementById(id);
-    if(e) e.classList.add("hidden");
-  });
-  [
-    "shifts-square", "announcements-square", "hire-square", 
-    "admin-square", "calendar-square", "profile-square"
-  ].forEach(id => {
-    var e = document.getElementById(id);
-    if(e) e.classList.remove("selected");
-  });
-}
-document.getElementById('shifts-square').onclick = function() {
-  hideAllDetails(); document.getElementById('shifts-details').classList.remove('hidden');
-  this.classList.add('selected');
-  renderShiftSquares();
-  document.getElementById('profile-details').innerHTML = `<h3>Click a profile to see shift details</h3>`;
-};
-document.getElementById('announcements-square').onclick = function() {
-  hideAllDetails(); document.getElementById('announcements-details').classList.remove('hidden');
-  this.classList.add('selected');
-  renderAnnouncements();
-};
-document.getElementById('hire-square').onclick = function() {
-  hideAllDetails(); document.getElementById('hire-details').classList.remove('hidden');
-  this.classList.add('selected');
-};
-document.getElementById('admin-square').onclick = function() {
-  hideAllDetails(); document.getElementById('admin-details').classList.remove('hidden');
-  this.classList.add('selected');
-  document.getElementById('admin-login').classList.remove('hidden');
-  document.getElementById('admin-panel').classList.add('hidden');
-  document.getElementById('admin-login-message').textContent = '';
-  document.getElementById('admin-code').value = '';
-};
-document.getElementById('calendar-square').onclick = function() {
-  hideAllDetails();
-  document.getElementById('calendar-details').classList.remove('hidden');
-  this.classList.add('selected');
-  // You should call your renderCalendar function here (not included in this snippet)
-};
-document.getElementById('profile-square').onclick = function() {
-  hideAllDetails();
-  document.getElementById('profile-details-section').classList.remove('hidden');
-  this.classList.add('selected');
-  showProfileLogin();
-};
-
-// ========== ADMIN PANEL LOGIC ==========
-
-// Admin login
-document.getElementById('admin-login-btn').onclick = function() {
-  const code = document.getElementById('admin-code').value;
-  if (code === getAdminCode()) {
-    document.getElementById('admin-login').classList.add('hidden');
-    document.getElementById('admin-panel').classList.remove('hidden');
-    renderAdminAnnouncements();
-    renderAdminWorkers();
-    renderAdminSubmissions();
-    renderAdminProfiles();
-    // renderAdminCalendarEvents(); // you can implement this for calendar events
-  } else {
-    document.getElementById('admin-login-message').textContent = 'Incorrect admin code.';
-  }
-};
-
-// Admin: Change admin code
-document.getElementById('change-admin-code-btn').onclick = function() {
-  const newCode = document.getElementById('new-admin-code').value;
-  if (!newCode || newCode.length < 2) {
-    document.getElementById('admin-code-message').textContent = 'Admin code too short.';
-    return;
-  }
-  setAdminCode(newCode);
-  document.getElementById('admin-code-message').textContent = 'Admin code changed!';
-  setTimeout(() => document.getElementById('admin-code-message').textContent = '', 1500);
-};
-
-// Admin: Announcements
-document.getElementById('admin-add-announcement-btn').onclick = function() {
-  const val = document.getElementById('admin-new-announcement').value.trim();
-  if (!val) return;
-  const list = getAnnouncements();
-  list.push(val);
-  setAnnouncements(list);
-  document.getElementById('admin-new-announcement').value = '';
-  renderAdminAnnouncements();
-};
-document.getElementById('admin-announcements-list').onclick = function(e) {
-  if (e.target.classList.contains('delete-announcement-btn')) {
-    const idx = +e.target.getAttribute('data-idx');
-    const list = getAnnouncements();
-    list.splice(idx, 1);
-    setAnnouncements(list);
-    renderAdminAnnouncements();
-  }
-};
-
-// Admin: Workers
-document.getElementById('add-worker-btn').onclick = function() {
-  document.getElementById('add-worker-form').classList.remove('hidden');
-};
-document.getElementById('cancel-new-worker-btn').onclick = function() {
-  document.getElementById('add-worker-form').classList.add('hidden');
-};
-document.getElementById('save-new-worker-btn').onclick = function() {
-  const name = document.getElementById('new-worker-name').value.trim();
-  const shift = document.getElementById('new-worker-shift').value.trim();
-  const tasks = document.getElementById('new-worker-tasks').value.split(',').map(s => s.trim()).filter(Boolean);
-  if (!name || !shift) return;
+document.getElementById("save-new-worker-btn").onclick = function(){
+  const name = document.getElementById("new-worker-name").value.trim();
+  const shift = document.getElementById("new-worker-shift").value.trim();
+  const tasks = document.getElementById("new-worker-tasks").value.split(",").map(t=>t.trim()).filter(Boolean);
+  if(!name || !shift) return alert("Name and shift required!");
   const workers = getWorkers();
-  workers.push({ name, shift, tasks });
+  workers.push({name,shift,tasks});
   setWorkers(workers);
-  document.getElementById('add-worker-form').classList.add('hidden');
   renderAdminWorkers();
+  document.getElementById("add-worker-form").classList.add("hidden");
+  document.getElementById("new-worker-name").value = "";
+  document.getElementById("new-worker-shift").value = "";
+  document.getElementById("new-worker-tasks").value = "";
 };
-document.getElementById('admin-workers-list').onclick = function(e) {
-  if (e.target.classList.contains('edit-worker-btn')) {
-    const idx = e.target.getAttribute('data-idx');
-    document.getElementById(`edit-worker-form-${idx}`).classList.remove('hidden');
+document.getElementById("admin-workers-list").onclick = function(e){
+  if(e.target.classList.contains("delete-worker-btn")){
+    const i = +e.target.getAttribute("data-i");
+    if(confirm("Delete worker?")){
+      const workers = getWorkers();
+      workers.splice(i,1);
+      setWorkers(workers);
+      renderAdminWorkers();
+    }
   }
-  if (e.target.classList.contains('cancel-edit-worker-btn')) {
-    const idx = e.target.getAttribute('data-idx');
-    document.getElementById(`edit-worker-form-${idx}`).classList.add('hidden');
-  }
-  if (e.target.classList.contains('save-edit-worker-btn')) {
-    const idx = e.target.getAttribute('data-idx');
-    const form = document.getElementById(`edit-worker-form-${idx}`);
-    const name = form.querySelector('.edit-worker-name').value.trim();
-    const shift = form.querySelector('.edit-worker-shift').value.trim();
-    const tasks = form.querySelector('.edit-worker-tasks-input').value.split(',').map(x=>x.trim()).filter(Boolean);
+  if(e.target.classList.contains("edit-worker-btn")){
+    const i = +e.target.getAttribute("data-i");
     const workers = getWorkers();
-    workers[idx] = { name, shift, tasks };
-    setWorkers(workers);
-    renderAdminWorkers();
+    const w = workers[i];
+    document.getElementById("add-worker-form").classList.remove("hidden");
+    document.getElementById("new-worker-name").value = w.name;
+    document.getElementById("new-worker-shift").value = w.shift;
+    document.getElementById("new-worker-tasks").value = (w.tasks||[]).join(", ");
+    document.getElementById("save-new-worker-btn").onclick = function(){
+      w.name = document.getElementById("new-worker-name").value.trim();
+      w.shift = document.getElementById("new-worker-shift").value.trim();
+      w.tasks = document.getElementById("new-worker-tasks").value.split(",").map(t=>t.trim()).filter(Boolean);
+      if(!w.name||!w.shift) return alert("Name and shift required!");
+      workers[i]=w;
+      setWorkers(workers);
+      renderAdminWorkers();
+      document.getElementById("add-worker-form").classList.add("hidden");
+      document.getElementById("new-worker-name").value = "";
+      document.getElementById("new-worker-shift").value = "";
+      document.getElementById("new-worker-tasks").value = "";
+      document.getElementById("save-new-worker-btn").onclick = saveNewWorkerBtnOrig;
+    };
   }
-  if (e.target.classList.contains('delete-worker-btn')) {
-    const idx = e.target.getAttribute('data-idx');
-    if (!confirm("Delete this worker?")) return;
-    const workers = getWorkers();
-    workers.splice(idx, 1);
-    setWorkers(workers);
-    renderAdminWorkers();
+};
+const saveNewWorkerBtnOrig = document.getElementById("save-new-worker-btn").onclick;
+
+// Announcements
+function renderAdminAnnouncements() {
+  const ann = getAnnouncements();
+  const ul = document.getElementById("admin-announcements-list");
+  ul.innerHTML = ann.map((a,i)=>`<li>${a} <button class="del-ann-btn" data-i="${i}">Delete</button></li>`).join('');
+}
+document.getElementById("admin-add-announcement-btn").onclick = function(){
+  const txt = document.getElementById("admin-new-announcement").value.trim();
+  if(!txt) return;
+  const ann = getAnnouncements();
+  ann.push(txt);
+  setAnnouncements(ann);
+  renderAdminAnnouncements();
+  document.getElementById("admin-new-announcement").value = "";
+};
+document.getElementById("admin-announcements-list").onclick = function(e){
+  if(e.target.classList.contains("del-ann-btn")){
+    const i = +e.target.getAttribute("data-i");
+    const ann = getAnnouncements();
+    ann.splice(i,1);
+    setAnnouncements(ann);
+    renderAdminAnnouncements();
   }
 };
 
-// Admin: Submissions
-document.getElementById('submissions-list').onclick = function(e) {
-  if (e.target.classList.contains('delete-submission-btn')) {
-    const idx = +e.target.getAttribute('data-idx');
+// Calendar events
+function renderAdminCalendar() {
+  const events = getCalendarEvents();
+  const el = document.getElementById("admin-calendar-list");
+  el.innerHTML = events.map((ev,i)=>`
+    <div class="admin-cal-event">
+      <b>${ev.title}</b> — ${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][ev.day]} ${ev.start}-${ev.end}
+      <span style="background:${ev.color};display:inline-block;width:19px;height:12px;vertical-align:middle;border-radius:5px;margin-left:5px;"></span>
+      <button class="admin-cal-delete-btn" data-i="${i}">Delete</button>
+    </div>
+  `).join('');
+}
+document.getElementById("admin-add-calendar-form").onsubmit = function(e){
+  e.preventDefault();
+  const title = document.getElementById("admin-cal-title").value.trim();
+  const day = +document.getElementById("admin-cal-day").value;
+  const start = document.getElementById("admin-cal-start").value;
+  const end = document.getElementById("admin-cal-end").value;
+  const color = document.getElementById("admin-cal-color").value;
+  if(!title||!start||!end) return alert("Title and times required!");
+  const evs = getCalendarEvents();
+  evs.push({ id:Date.now(), title, day, start, end, color });
+  setCalendarEvents(evs);
+  renderAdminCalendar();
+  this.reset();
+};
+document.getElementById("admin-calendar-list").onclick = function(e){
+  if(e.target.classList.contains("admin-cal-delete-btn")){
+    const i = +e.target.getAttribute("data-i");
+    const evs = getCalendarEvents();
+    evs.splice(i,1);
+    setCalendarEvents(evs);
+    renderAdminCalendar();
+  }
+};
+
+// Applications
+function renderAdminSubmissions() {
+  const subs = getSubmissions();
+  const el = document.getElementById("submissions-list");
+  el.innerHTML = subs.map((s,i)=>`
+    <div class="submission-block">
+      <b>${s.name||"-"}</b> (${s.email||"-"})<br>
+      <b>Phone:</b> ${s.phone||"-"}<br>
+      <b>Why:</b> ${s.why||"-"}<br>
+      <b>Experience:</b> ${s.experience||"-"}<br>
+      <b>Strengths:</b> ${s.strengths||"-"}<br>
+      <b>Weaknesses:</b> ${s.weaknesses||"-"}<br>
+      <b>Availability:</b> ${s.availability||"-"}<br>
+      <b>Preferred shift:</b> ${s.shift||"-"}<br>
+      <b>Weekends:</b> ${s.weekends||"-"}<br>
+      <b>Challenge:</b> ${s.challenge||"-"}<br>
+      <b>Emergency:</b> ${s.emergency||"-"}
+      <button class="del-sub-btn" data-i="${i}" style="float:right;">Delete</button>
+    </div>
+  `).join('');
+}
+document.getElementById("submissions-list").onclick = function(e){
+  if(e.target.classList.contains("del-sub-btn")){
+    const i = +e.target.getAttribute("data-i");
     const subs = getSubmissions();
-    subs.splice(idx, 1);
+    subs.splice(i,1);
     setSubmissions(subs);
     renderAdminSubmissions();
   }
 };
 
-// Admin: Profile passwords (simple reset/display)
+// Admin code change
+document.getElementById("change-admin-code-btn").onclick = function(){
+  const code = document.getElementById("new-admin-code").value.trim();
+  if(code.length<3){
+    document.getElementById("admin-code-message").textContent = "Must be 3+ chars";
+    return;
+  }
+  setAdminCode(code);
+  document.getElementById("admin-code-message").textContent = "Changed!";
+  setTimeout(()=>{document.getElementById("admin-code-message").textContent="";},1200);
+  document.getElementById("new-admin-code").value = "";
+};
+
+// ========== ADMIN PROFILE FULL CRUD ==========
+
 function renderAdminProfilePasswords() {
   const profiles = getProfiles();
   const container = document.getElementById('admin-profile-passwords');
   container.innerHTML = '';
-  Object.entries(profiles).forEach(([key, profile]) => {
+
+  // Add button for creating a new profile
+  const addBtn = document.createElement('button');
+  addBtn.textContent = "Add New Profile";
+  addBtn.style = "background:#1976d2;color:white;font-weight:700;margin-bottom:18px;";
+  addBtn.onclick = () => showAdminNewProfileForm();
+  container.appendChild(addBtn);
+
+  // Add form for new profile (hidden by default)
+  const newFormDiv = document.createElement('div');
+  newFormDiv.id = "admin-new-profile-form";
+  newFormDiv.style.display = "none";
+  newFormDiv.innerHTML = `
+    <form class="admin-new-profile-form" style="margin-top:15px;background:#fafdff;padding:14px 14px 12px 14px;border-radius:9px;box-shadow:0 1px 4px #8881;">
+      <label>Username: <input type="text" class="admin-new-username" required></label>
+      <label>Name: <input type="text" class="admin-new-name" required></label>
+      <label>Schedule: <input type="text" class="admin-new-schedule"></label>
+      <label>Lunch Break: <input type="text" class="admin-new-lunch"></label>
+      <label>Password: <input type="password" class="admin-new-password" required></label>
+      <label>
+        Past Jobs:
+        <textarea class="admin-new-jobs" rows="3" placeholder="title|duration|hours|lunch, one per line"></textarea>
+        <span style="font-size:0.95em;color:#888;">Format: title|duration|hours|lunch (each job on a new line)</span>
+      </label>
+      <button type="submit" style="background:#1eae60;color:white;font-weight:700;">Create Profile</button>
+      <button type="button" class="admin-new-cancel-btn" style="background:#d32f2f;color:white;font-weight:700;margin-left:10px;">Cancel</button>
+    </form>
+    <div class="admin-new-profile-feedback" style="color:#d32f2f;margin-top:7px;"></div>
+  `;
+  container.appendChild(newFormDiv);
+
+  // Render existing profiles
+  Object.keys(profiles).forEach(key => {
+    const user = profiles[key];
+    const jobsString = (user.jobs && user.jobs.length)
+      ? user.jobs.map(j => `${j.title || ""}|${j.duration || ""}|${j.hours || ""}|${j.lunch || ""}`).join('\n')
+      : '';
     const div = document.createElement('div');
+    div.className = "admin-profile-edit-block";
+    div.style.marginBottom = "22px";
     div.innerHTML = `
-      <b>${profile.username}:</b> 
-      <input type="text" id="admin-pw-${key}" value="${profile.password}" style="width:120px;">
-      <button onclick="(function(){const ps=getProfiles();ps['${key}'].password=document.getElementById('admin-pw-${key}').value;setProfiles(ps);alert('Password updated!');})()">Save</button>
+      <b>${user.name}</b> (<i>${user.username}</i>)
+      <form class="admin-edit-profile-form" data-key="${key}" style="margin-top:8px;background:#fafdff;padding:14px 14px 12px 14px;border-radius:9px;box-shadow:0 1px 4px #8881;">
+        <label>Username: <input type="text" class="admin-profile-username" value="${user.username}" required></label>
+        <label>Name: <input type="text" class="admin-profile-name" value="${user.name}" required></label>
+        <label>Schedule: <input type="text" class="admin-profile-schedule" value="${user.schedule || ""}"></label>
+        <label>Lunch Break: <input type="text" class="admin-profile-lunch" value="${user.lunch || ""}"></label>
+        <label>Password: <input type="password" class="admin-profile-password" placeholder="Leave blank to keep current"></label>
+        <label>
+          Past Jobs:
+          <textarea class="admin-profile-jobs" rows="3" placeholder="title|duration|hours|lunch, one per line">${jobsString}</textarea>
+          <span style="font-size:0.95em;color:#888;">Format: title|duration|hours|lunch (each job on a new line)</span>
+        </label>
+        <label>
+          <b>Delete All Shift History:</b>
+          <button type="button" class="admin-profile-history-delete-btn" data-key="${key}" style="background:#d32f2f;color:white;margin-left:7px;">Delete All</button>
+        </label>
+        <div class="profile-history-preview" style="background:#f6f9fa;border-radius:7px;padding:8px 12px;margin-bottom:8px;">
+          <b>Shift History Preview:</b>
+          <ul style="margin-top:4px;">
+            ${user.history && user.history.length
+              ? user.history.slice(0, 5).map(h =>
+                `<li>${h.date}: ${h.clockIn || "-"} to ${h.clockOut || "-"}</li>`).join("")
+              : "<li><i>No history</i></li>"
+            }
+          </ul>
+        </div>
+        <button type="submit" class="admin-profile-save-btn" style="background:#1eae60;color:white;font-weight:700;">Save Profile</button>
+        <button type="button" class="admin-profile-delete-btn" data-key="${key}" style="background:#d32f2f;color:white;font-weight:700;margin-left:10px;">Delete Profile</button>
+      </form>
+      <div class="admin-profile-feedback" style="color:#d32f2f;margin-top:7px;"></div>
     `;
     container.appendChild(div);
   });
 }
-renderAdminProfilePasswords();
 
-// ========== HIRE FORM ==========
-document.getElementById('hire-form').onsubmit = function(e) {
-  e.preventDefault();
-  const data = {};
-  Array.from(this.elements).forEach(el => {
-    if (el.name) data[el.name] = el.value;
+// Show/hide new profile form
+function showAdminNewProfileForm() {
+  const formDiv = document.getElementById("admin-new-profile-form");
+  formDiv.style.display = "block";
+  formDiv.querySelector(".admin-new-profile-form").reset();
+  formDiv.querySelector(".admin-new-profile-feedback").textContent = "";
+}
+function hideAdminNewProfileForm() {
+  const formDiv = document.getElementById("admin-new-profile-form");
+  formDiv.style.display = "none";
+}
+
+// Add new profile
+document.getElementById('admin-profile-passwords').addEventListener('submit', function(e) {
+  // New profile creation
+  if (e.target.classList.contains('admin-new-profile-form')) {
+    e.preventDefault();
+    const form = e.target;
+    const feedback = form.parentNode.querySelector('.admin-new-profile-feedback');
+    const username = form.querySelector('.admin-new-username').value.trim();
+    const name = form.querySelector('.admin-new-name').value.trim();
+    const schedule = form.querySelector('.admin-new-schedule').value.trim();
+    const lunch = form.querySelector('.admin-new-lunch').value.trim();
+    const password = form.querySelector('.admin-new-password').value;
+    const jobsRaw = form.querySelector('.admin-new-jobs').value;
+    // Parse jobs
+    let jobs = [];
+    if (jobsRaw.trim()) {
+      jobs = jobsRaw.split(/\n/).map(j=>j.trim()).filter(Boolean)
+        .map(str=>{
+          let [title, duration, hours, lunch] = str.split('|').map(x=>x && x.trim());
+          return { title: title||"", duration: duration||"", hours: hours||"", lunch: lunch||"" };
+        });
+    }
+    // Validate
+    if (!username || !name || !password) {
+      feedback.textContent = "Username, name, and password are required.";
+      return;
+    }
+    if (password.length < 3) {
+      feedback.textContent = "Password must be at least 3 characters.";
+      return;
+    }
+    const profiles = getProfiles();
+    for (const k in profiles) {
+      if (profiles[k].username === username) {
+        feedback.textContent = "Username already exists!";
+        return;
+      }
+    }
+    // Generate a unique key
+    let key = username.toLowerCase().replace(/[^a-z0-9]/g, '');
+    let counter = 1;
+    while (profiles[key]) { key = `${username}${counter}`; counter++; }
+    profiles[key] = {
+      username,
+      name,
+      schedule,
+      lunch,
+      password,
+      jobs,
+      history: []
+    };
+    setProfiles(profiles);
+    hideAdminNewProfileForm();
+    renderAdminProfilePasswords();
+    alert("New profile created!");
+  }
+});
+
+// Cancel new profile form
+document.getElementById('admin-profile-passwords').addEventListener('click', function(e) {
+  if (e.target.classList.contains('admin-new-cancel-btn')) {
+    hideAdminNewProfileForm();
+  }
+});
+
+// Save profile edits
+document.getElementById('admin-profile-passwords').addEventListener('submit', function(e) {
+  if (e.target.classList.contains('admin-edit-profile-form')) {
+    e.preventDefault();
+    const form = e.target;
+    const key = form.getAttribute('data-key');
+    const feedback = form.parentNode.querySelector('.admin-profile-feedback');
+    const profiles = getProfiles();
+    if (!profiles[key]) return;
+
+    // Get fields
+    const username = form.querySelector('.admin-profile-username').value.trim();
+    const name = form.querySelector('.admin-profile-name').value.trim();
+    const schedule = form.querySelector('.admin-profile-schedule').value.trim();
+    const lunch = form.querySelector('.admin-profile-lunch').value.trim();
+    const password = form.querySelector('.admin-profile-password').value;
+    const jobsRaw = form.querySelector('.admin-profile-jobs').value;
+    // Parse jobs
+    let jobs = [];
+    if (jobsRaw.trim()) {
+      jobs = jobsRaw.split(/\n/).map(j=>j.trim()).filter(Boolean)
+        .map(str=>{
+          let [title, duration, hours, lunch] = str.split('|').map(x=>x && x.trim());
+          return { title: title||"", duration: duration||"", hours: hours||"", lunch: lunch||"" };
+        });
+    }
+
+    // Validate username uniqueness
+    if (username !== profiles[key].username) {
+      for (const k in profiles) {
+        if (k !== key && profiles[k].username === username) {
+          feedback.textContent = "Username already exists!";
+          return;
+        }
+      }
+    }
+
+    if (!username || !name) {
+      feedback.textContent = "Username and name are required.";
+      return;
+    }
+
+    profiles[key].username = username;
+    profiles[key].name = name;
+    profiles[key].schedule = schedule;
+    profiles[key].lunch = lunch;
+    if (password && password.length >= 3) profiles[key].password = password;
+    profiles[key].jobs = jobs;
+
+    setProfiles(profiles);
+    feedback.textContent = "Profile updated!";
+    setTimeout(() => feedback.textContent = "", 1300);
+    renderAdminProfilePasswords();
+  }
+});
+
+// Delete user shift history
+document.getElementById('admin-profile-passwords').addEventListener('click', function(e) {
+  if (e.target.classList.contains('admin-profile-history-delete-btn')) {
+    const key = e.target.getAttribute('data-key');
+    if (!confirm("Delete all shift history for this user?")) return;
+    const profiles = getProfiles();
+    profiles[key].history = [];
+    setProfiles(profiles);
+    renderAdminProfilePasswords();
+  }
+});
+
+// Delete profile
+document.getElementById('admin-profile-passwords').addEventListener('click', function(e) {
+  if (e.target.classList.contains('admin-profile-delete-btn')) {
+    const key = e.target.getAttribute('data-key');
+    if (!confirm("Delete this profile? This cannot be undone.")) return;
+    const profiles = getProfiles();
+    delete profiles[key];
+    setProfiles(profiles);
+    renderAdminProfilePasswords();
+    alert("Profile deleted!");
+  }
+});
+
+// ========== INITIAL RENDERS ==========
+
+// Default: show first menu
+(function(){
+  sectionIDs.forEach((sec,i) => {
+    document.getElementById(sec).classList.toggle("hidden", i!==0);
   });
-  saveSubmission(data);
-  this.reset();
-  document.getElementById('form-message').textContent = "Application submitted!";
-  setTimeout(()=>document.getElementById('form-message').textContent="", 1400);
-};
+  squareIDs.forEach((sid,i) => document.getElementById(sid).classList.toggle("selected",i===0));
+  renderWorkers();
+})();
 
-// ========== INITIALIZE ==========
-renderShiftSquares();
-renderAnnouncements();
-renderAdminWorkers();
-renderAdminAnnouncements();
-renderAdminSubmissions();
-renderAdminProfiles();
-renderAdminProfilePasswords();
-// If you have calendar and other sections, call their render functions here as well!
-
-// ========== END OF DASHBOARD ==========
-</script>
+  </script>
 </body>
 </html>
