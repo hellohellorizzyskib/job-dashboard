@@ -49,26 +49,28 @@
         <h3>Click a profile to see shift details</h3>
       </div>
     </div>
+
     <!-- Announcements Section -->
     <div class="details-section hidden" id="announcements-details">
       <h2>Announcements</h2>
       <ul class="announcements-list" id="announcements-list"></ul>
     </div>
+
     <!-- Hire Section -->
     <div class="details-section hidden" id="hire-details">
       <h2>Apply for Hire</h2>
       <form class="hire-form" id="hire-form">
         <label>
           1. Full Name:
-          <input type="text" name="name" required>
+          <input type="text" name="name" required autocomplete="name">
         </label>
         <label>
           2. Email Address:
-          <input type="email" name="email" required>
+          <input type="email" name="email" required autocomplete="email">
         </label>
         <label>
           3. Phone Number:
-          <input type="text" name="phone" required>
+          <input type="text" name="phone" required autocomplete="tel">
         </label>
         <label>
           4. Why do you want this job?
@@ -92,7 +94,8 @@
         </label>
         <label>
           9. Which shift would you prefer?
-          <select name="shift">
+          <select name="shift" required>
+            <option value="">Select...</option>
             <option>Morning (6am-2pm)</option>
             <option>Day (9am-5pm)</option>
             <option>Evening (1pm-9pm)</option>
@@ -100,7 +103,8 @@
         </label>
         <label>
           10. Are you willing to work weekends?
-          <select name="weekends">
+          <select name="weekends" required>
+            <option value="">Select...</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
             <option value="maybe">Maybe</option>
@@ -118,6 +122,7 @@
         <div class="form-message" id="form-message"></div>
       </form>
     </div>
+
     <!-- Admin Section -->
     <div class="details-section hidden" id="admin-details">
       <h2>Admin Access</h2>
