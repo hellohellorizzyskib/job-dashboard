@@ -5,27 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Job Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="dashboard">
     <div class="menu-squares">
-      <div class="menu-square" id="shifts-square">
+      <div class="menu-square orange-gradient" id="shifts-square">
         <span>Shifts</span>
       </div>
-      <div class="menu-square" id="announcements-square">
+      <div class="menu-square blue-gradient" id="announcements-square">
         <span>Announcements</span>
+      </div>
+      <div class="menu-square green-gradient" id="hire-square">
+        <span>Apply for Hire</span>
+      </div>
+      <div class="menu-square purple-gradient" id="admin-square">
+        <span>Admin</span>
       </div>
     </div>
     <div class="details-section hidden" id="shifts-details">
       <h2>Shifts</h2>
       <div class="shift-squares">
-        <div class="shift-square" data-profile="john">
+        <div class="shift-square orange-gradient" data-profile="john">
           <span>John Doe</span>
         </div>
-        <div class="shift-square" data-profile="jane">
+        <div class="shift-square blue-gradient" data-profile="jane">
           <span>Jane Doe</span>
         </div>
-        <div class="shift-square" data-profile="bob">
+        <div class="shift-square green-gradient" data-profile="bob">
           <span>Bob Smith</span>
         </div>
       </div>
@@ -41,26 +49,133 @@
         <li>Fire drill scheduled for next Monday at 10am.</li>
       </ul>
     </div>
+    <div class="details-section hidden" id="hire-details">
+      <h2>Apply for Hire</h2>
+      <form class="hire-form" id="hire-form">
+        <label>
+          1. Full Name:
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          2. Email Address:
+          <input type="email" name="email" required>
+        </label>
+        <label>
+          3. Phone Number:
+          <input type="text" name="phone" required>
+        </label>
+        <label>
+          4. Why do you want this job?
+          <textarea name="why" rows="2" required></textarea>
+        </label>
+        <label>
+          5. What relevant experience do you have?
+          <textarea name="experience" rows="2" required></textarea>
+        </label>
+        <label>
+          6. What are your strengths?
+          <textarea name="strengths" rows="2" required></textarea>
+        </label>
+        <label>
+          7. What are your weaknesses?
+          <textarea name="weaknesses" rows="2" required></textarea>
+        </label>
+        <label>
+          8. What is your availability (days and times)?
+          <input type="text" name="availability" required>
+        </label>
+        <label>
+          9. Which shift would you prefer?
+          <select name="shift">
+            <option>Morning (6am-2pm)</option>
+            <option>Day (9am-5pm)</option>
+            <option>Evening (1pm-9pm)</option>
+          </select>
+        </label>
+        <label>
+          10. Are you willing to work weekends?
+          <select name="weekends">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="maybe">Maybe</option>
+          </select>
+        </label>
+        <label>
+          11. Tell us about a time you overcame a challenge:
+          <textarea name="challenge" rows="2" required></textarea>
+        </label>
+        <label>
+          12. Emergency Contact Name & Number:
+          <input type="text" name="emergency" required>
+        </label>
+        <button type="submit">Submit Application</button>
+        <div class="form-message" id="form-message"></div>
+      </form>
+    </div>
+    <div class="details-section hidden" id="admin-details">
+      <h2>Admin Access</h2>
+      <div id="admin-login">
+        <label>
+          Enter admin code:
+          <input type="password" id="admin-code" maxlength="8">
+        </label>
+        <button id="admin-login-btn">Login</button>
+        <div id="admin-login-message" style="color: #b32d2d; margin-top: 8px;"></div>
+      </div>
+      <div id="submissions-section" class="hidden">
+        <h3>Form Submissions</h3>
+        <div id="submissions-list"></div>
+      </div>
+    </div>
   </div>
   <script>
     // Menu square click handling
     const shiftsSquare = document.getElementById('shifts-square');
     const announcementsSquare = document.getElementById('announcements-square');
+    const hireSquare = document.getElementById('hire-square');
+    const adminSquare = document.getElementById('admin-square');
     const shiftsDetails = document.getElementById('shifts-details');
     const announcementsDetails = document.getElementById('announcements-details');
+    const hireDetails = document.getElementById('hire-details');
+    const adminDetails = document.getElementById('admin-details');
+
+    function hideAllDetails() {
+      shiftsDetails.classList.add('hidden');
+      announcementsDetails.classList.add('hidden');
+      hireDetails.classList.add('hidden');
+      adminDetails.classList.add('hidden');
+      shiftsSquare.classList.remove('selected');
+      announcementsSquare.classList.remove('selected');
+      hireSquare.classList.remove('selected');
+      adminSquare.classList.remove('selected');
+    }
 
     shiftsSquare.addEventListener('click', () => {
+      hideAllDetails();
       shiftsDetails.classList.remove('hidden');
-      announcementsDetails.classList.add('hidden');
       shiftsSquare.classList.add('selected');
-      announcementsSquare.classList.remove('selected');
     });
 
     announcementsSquare.addEventListener('click', () => {
+      hideAllDetails();
       announcementsDetails.classList.remove('hidden');
-      shiftsDetails.classList.add('hidden');
       announcementsSquare.classList.add('selected');
-      shiftsSquare.classList.remove('selected');
+    });
+
+    hireSquare.addEventListener('click', () => {
+      hideAllDetails();
+      hireDetails.classList.remove('hidden');
+      hireSquare.classList.add('selected');
+    });
+
+    adminSquare.addEventListener('click', () => {
+      hideAllDetails();
+      adminDetails.classList.remove('hidden');
+      adminSquare.classList.add('selected');
+      document.getElementById('admin-login').classList.remove('hidden');
+      document.getElementById('submissions-section').classList.add('hidden');
+      document.getElementById('admin-login-message').textContent = '';
+      document.getElementById('admin-code').value = '';
     });
 
     // Shift profiles details
@@ -113,6 +228,74 @@
         btn.classList.add('selected');
       });
     });
+
+    // Store and retrieve form submissions from localStorage
+    function getSubmissions() {
+      return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
+    }
+    function saveSubmission(data) {
+      const subs = getSubmissions();
+      subs.push(data);
+      localStorage.setItem('hireSubmissions', JSON.stringify(subs));
+    }
+
+    // Hire form submission
+    document.getElementById('hire-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {};
+      for(const [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      saveSubmission(data);
+      document.getElementById('form-message').textContent = "Application submitted! We'll be in touch.";
+      form.reset();
+      setTimeout(() => {
+        document.getElementById('form-message').textContent = "";
+      }, 3000);
+    });
+
+    // Admin code check
+    document.getElementById('admin-login-btn').addEventListener('click', function() {
+      const code = document.getElementById('admin-code').value;
+      if(code === "1234") {
+        document.getElementById('admin-login').classList.add('hidden');
+        document.getElementById('submissions-section').classList.remove('hidden');
+        renderSubmissions();
+      } else {
+        document.getElementById('admin-login-message').textContent = "Incorrect code.";
+      }
+    });
+
+    // Display submissions
+    function renderSubmissions() {
+      const subs = getSubmissions();
+      const list = document.getElementById('submissions-list');
+      if(subs.length === 0) {
+        list.innerHTML = "<em>No submissions yet.</em>";
+        return;
+      }
+      list.innerHTML = subs.map((s, i) => `
+        <div class="submission-block">
+          <strong>Application #${i+1}</strong><br>
+          <ul>
+            <li><b>Full Name:</b> ${s.name}</li>
+            <li><b>Email:</b> ${s.email}</li>
+            <li><b>Phone:</b> ${s.phone}</li>
+            <li><b>Why do you want this job?</b> ${s.why}</li>
+            <li><b>Relevant experience:</b> ${s.experience}</li>
+            <li><b>Strengths:</b> ${s.strengths}</li>
+            <li><b>Weaknesses:</b> ${s.weaknesses}</li>
+            <li><b>Availability:</b> ${s.availability}</li>
+            <li><b>Preferred shift:</b> ${s.shift}</li>
+            <li><b>Willing to work weekends:</b> ${s.weekends}</li>
+            <li><b>Challenge overcome:</b> ${s.challenge}</li>
+            <li><b>Emergency contact:</b> ${s.emergency}</li>
+          </ul>
+        </div>
+      `).join("");
+    }
   </script>
 </body>
 </html>
