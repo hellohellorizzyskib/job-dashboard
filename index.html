@@ -22,7 +22,34 @@
       <div class="menu-square purple-gradient" id="admin-square">
         <span>Admin</span>
       </div>
+      <div class="menu-square calendar-gradient" id="calendar-square">
+        <span>Calendar</span>
+      </div>
     </div>
+
+    <!-- Calendar Section -->
+    <div class="details-section hidden" id="calendar-details">
+      <h2>Weekly Calendar</h2>
+      <div class="calendar-container">
+        <div class="calendar-table">
+          <div class="calendar-header">
+            <div class="calendar-cell"></div>
+            <div class="calendar-cell">Mon</div>
+            <div class="calendar-cell">Tue</div>
+            <div class="calendar-cell">Wed</div>
+            <div class="calendar-cell">Thu</div>
+            <div class="calendar-cell">Fri</div>
+            <div class="calendar-cell">Sat</div>
+            <div class="calendar-cell">Sun</div>
+          </div>
+          <div class="calendar-body" id="calendar-body">
+            <!-- Calendar rows created by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ...existing sections (shifts, announcements, hire, admin) follow here unchanged... -->
     <div class="details-section hidden" id="shifts-details">
       <h2>Shifts</h2>
       <div class="shift-squares" id="shift-squares"></div>
@@ -145,6 +172,76 @@
     </div>
   </div>
   <script>
+    // --- Calendar Data and Rendering ---
+    // Example events: start/end in 24h format, day: 0=Mon, 6=Sun
+    const calendarEvents = [
+      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
+      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
+      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
+      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
+      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
+      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
+    ];
+    const hourStart = 6, hourEnd = 21; // 6am to 9pm
+
+    function renderCalendar() {
+      const calBody = document.getElementById('calendar-body');
+      calBody.innerHTML = '';
+      for(let hour = hourStart; hour < hourEnd; hour++) {
+        const row = document.createElement('div');
+        row.className = 'calendar-row';
+        // Time label
+        const label = document.createElement('div');
+        label.className = 'calendar-cell calendar-time-label';
+        label.textContent = (hour < 12 ? hour : (hour === 12 ? 12 : hour-12)) + (hour < 12 ? "am" : "pm");
+        row.appendChild(label);
+        // Day cells
+        for(let day = 0; day < 7; day++) {
+          const cell = document.createElement('div');
+          cell.className = 'calendar-cell calendar-slot';
+          cell.dataset.day = day;
+          cell.dataset.hour = hour;
+          row.appendChild(cell);
+        }
+        calBody.appendChild(row);
+      }
+      // Render events
+      calendarEvents.forEach(ev => {
+        // For each event, insert a block spanning the right number of hours in the correct column
+        const startRow = Math.floor(ev.start) - hourStart;
+        const endRow = Math.ceil(ev.end) - hourStart;
+        const top = (ev.start - Math.floor(ev.start)) * 40; // 40px per hour
+        const height = (ev.end - ev.start) * 40; // 40px per hour
+        // Find the cell in the first row for start hour and the correct day
+        const allRows = document.querySelectorAll('.calendar-row');
+        if (startRow >= 0 && startRow < allRows.length) {
+          const cell = allRows[startRow].children[ev.day + 1];
+          // Create event block
+          const evDiv = document.createElement('div');
+          evDiv.className = 'calendar-event-block';
+          evDiv.style.top = top + "px";
+          evDiv.style.height = height + "px";
+          evDiv.style.background = ev.color;
+          evDiv.textContent = ev.title;
+          // Position absolutely within cell
+          cell.style.position = "relative";
+          evDiv.style.position = "absolute";
+          evDiv.style.left = "2px";
+          evDiv.style.right = "2px";
+          evDiv.style.zIndex = 2;
+          cell.appendChild(evDiv);
+          // For multi-hour events, shade background of all spanned cells
+          for(let r = startRow+1; r < endRow; r++) {
+            if (allRows[r]) {
+              const spanCell = allRows[r].children[ev.day + 1];
+              spanCell.style.background = "#f7f8ff";
+              spanCell.style.position = "relative";
+            }
+          }
+        }
+      });
+    }
+
     // --- Data Storage and Defaults ---
     const defaultWorkers = [
       {
@@ -183,28 +280,24 @@
       "Reminder: Submit weekly reports by Thursday 5pm.",
       "Fire drill scheduled for next Monday at 10am."
     ];
-    // Admin code
     function getAdminCode() {
       return localStorage.getItem('adminCode') || "1234";
     }
     function setAdminCode(newCode) {
       localStorage.setItem('adminCode', newCode);
     }
-    // Workers
     function getWorkers() {
       return JSON.parse(localStorage.getItem('workers') || JSON.stringify(defaultWorkers));
     }
     function setWorkers(workers) {
       localStorage.setItem('workers', JSON.stringify(workers));
     }
-    // Announcements
     function getAnnouncements() {
       return JSON.parse(localStorage.getItem('announcements') || JSON.stringify(defaultAnnouncements));
     }
     function setAnnouncements(list) {
       localStorage.setItem('announcements', JSON.stringify(list));
     }
-    // Submissions
     function getSubmissions() {
       return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
     }
@@ -217,7 +310,6 @@
       setSubmissions(subs);
     }
 
-    // --- UI Functions ---
     function renderShiftSquares() {
       const workers = getWorkers();
       const shiftSquares = document.getElementById('shift-squares');
@@ -325,10 +417,12 @@
       document.getElementById('announcements-details').classList.add('hidden');
       document.getElementById('hire-details').classList.add('hidden');
       document.getElementById('admin-details').classList.add('hidden');
+      document.getElementById('calendar-details').classList.add('hidden');
       document.getElementById('shifts-square').classList.remove('selected');
       document.getElementById('announcements-square').classList.remove('selected');
       document.getElementById('hire-square').classList.remove('selected');
       document.getElementById('admin-square').classList.remove('selected');
+      document.getElementById('calendar-square').classList.remove('selected');
     }
     document.getElementById('shifts-square').addEventListener('click', () => {
       hideAllDetails();
@@ -356,6 +450,12 @@
       document.getElementById('admin-panel').classList.add('hidden');
       document.getElementById('admin-login-message').textContent = '';
       document.getElementById('admin-code').value = '';
+    });
+    document.getElementById('calendar-square').addEventListener('click', () => {
+      hideAllDetails();
+      document.getElementById('calendar-details').classList.remove('hidden');
+      document.getElementById('calendar-square').classList.add('selected');
+      renderCalendar();
     });
 
     // --- Hire form submission ---
@@ -488,7 +588,6 @@
         }
       }
     });
-    // Edit announcement text (contenteditable)
     document.getElementById('admin-announcements-list').addEventListener('blur', function(e) {
       if(e.target.classList.contains('admin-announcement-text')) {
         const idx = +e.target.dataset.idx;
