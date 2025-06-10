@@ -30,26 +30,18 @@
     <!-- Calendar Section -->
     <div class="details-section hidden" id="calendar-details">
       <h2>Weekly Calendar</h2>
-      <div class="calendar-container">
-        <div class="calendar-table">
-          <div class="calendar-header">
-            <div class="calendar-cell"></div>
-            <div class="calendar-cell">Mon</div>
-            <div class="calendar-cell">Tue</div>
-            <div class="calendar-cell">Wed</div>
-            <div class="calendar-cell">Thu</div>
-            <div class="calendar-cell">Fri</div>
-            <div class="calendar-cell">Sat</div>
-            <div class="calendar-cell">Sun</div>
-          </div>
-          <div class="calendar-body" id="calendar-body">
-            <!-- Calendar rows created by JS -->
-          </div>
-        </div>
+      <div class="calendar-toolbar">
+        <button id="calendar-today-btn">Today</button>
+        <span class="calendar-week-label" id="calendar-week-label"></span>
+        <button id="calendar-prev-btn">&#8592;</button>
+        <button id="calendar-next-btn">&#8594;</button>
+      </div>
+      <div class="calendar-container" id="calendar-container">
+        <div class="calendar-grid" id="calendar-grid"></div>
       </div>
     </div>
 
-    <!-- ...existing sections (shifts, announcements, hire, admin) follow here unchanged... -->
+    <!-- Shifts Section -->
     <div class="details-section hidden" id="shifts-details">
       <h2>Shifts</h2>
       <div class="shift-squares" id="shift-squares"></div>
@@ -57,10 +49,12 @@
         <h3>Click a profile to see shift details</h3>
       </div>
     </div>
+    <!-- Announcements Section -->
     <div class="details-section hidden" id="announcements-details">
       <h2>Announcements</h2>
       <ul class="announcements-list" id="announcements-list"></ul>
     </div>
+    <!-- Hire Section -->
     <div class="details-section hidden" id="hire-details">
       <h2>Apply for Hire</h2>
       <form class="hire-form" id="hire-form">
@@ -124,6 +118,7 @@
         <div class="form-message" id="form-message"></div>
       </form>
     </div>
+    <!-- Admin Section -->
     <div class="details-section hidden" id="admin-details">
       <h2>Admin Access</h2>
       <div id="admin-login">
@@ -172,77 +167,8 @@
     </div>
   </div>
   <script>
-    // --- Calendar Data and Rendering ---
-    // Example events: start/end in 24h format, day: 0=Mon, 6=Sun
-    const calendarEvents = [
-      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
-      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
-      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
-      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
-      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
-      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
-    ];
-    const hourStart = 6, hourEnd = 21; // 6am to 9pm
-
-    function renderCalendar() {
-      const calBody = document.getElementById('calendar-body');
-      calBody.innerHTML = '';
-      for(let hour = hourStart; hour < hourEnd; hour++) {
-        const row = document.createElement('div');
-        row.className = 'calendar-row';
-        // Time label
-        const label = document.createElement('div');
-        label.className = 'calendar-cell calendar-time-label';
-        label.textContent = (hour < 12 ? hour : (hour === 12 ? 12 : hour-12)) + (hour < 12 ? "am" : "pm");
-        row.appendChild(label);
-        // Day cells
-        for(let day = 0; day < 7; day++) {
-          const cell = document.createElement('div');
-          cell.className = 'calendar-cell calendar-slot';
-          cell.dataset.day = day;
-          cell.dataset.hour = hour;
-          row.appendChild(cell);
-        }
-        calBody.appendChild(row);
-      }
-      // Render events
-      calendarEvents.forEach(ev => {
-        // For each event, insert a block spanning the right number of hours in the correct column
-        const startRow = Math.floor(ev.start) - hourStart;
-        const endRow = Math.ceil(ev.end) - hourStart;
-        const top = (ev.start - Math.floor(ev.start)) * 40; // 40px per hour
-        const height = (ev.end - ev.start) * 40; // 40px per hour
-        // Find the cell in the first row for start hour and the correct day
-        const allRows = document.querySelectorAll('.calendar-row');
-        if (startRow >= 0 && startRow < allRows.length) {
-          const cell = allRows[startRow].children[ev.day + 1];
-          // Create event block
-          const evDiv = document.createElement('div');
-          evDiv.className = 'calendar-event-block';
-          evDiv.style.top = top + "px";
-          evDiv.style.height = height + "px";
-          evDiv.style.background = ev.color;
-          evDiv.textContent = ev.title;
-          // Position absolutely within cell
-          cell.style.position = "relative";
-          evDiv.style.position = "absolute";
-          evDiv.style.left = "2px";
-          evDiv.style.right = "2px";
-          evDiv.style.zIndex = 2;
-          cell.appendChild(evDiv);
-          // For multi-hour events, shade background of all spanned cells
-          for(let r = startRow+1; r < endRow; r++) {
-            if (allRows[r]) {
-              const spanCell = allRows[r].children[ev.day + 1];
-              spanCell.style.background = "#f7f8ff";
-              spanCell.style.position = "relative";
-            }
-          }
-        }
-      });
-    }
-
-    // --- Data Storage and Defaults ---
+    // ============ Dashboard State and LocalStorage =============
+    // Workers
     const defaultWorkers = [
       {
         name: "John Doe",
@@ -275,29 +201,35 @@
         ]
       }
     ];
-    const defaultAnnouncements = [
-      "Team lunch on Friday at 1pm in the main cafeteria.",
-      "Reminder: Submit weekly reports by Thursday 5pm.",
-      "Fire drill scheduled for next Monday at 10am."
-    ];
-    function getAdminCode() {
-      return localStorage.getItem('adminCode') || "1234";
-    }
-    function setAdminCode(newCode) {
-      localStorage.setItem('adminCode', newCode);
-    }
     function getWorkers() {
       return JSON.parse(localStorage.getItem('workers') || JSON.stringify(defaultWorkers));
     }
     function setWorkers(workers) {
       localStorage.setItem('workers', JSON.stringify(workers));
     }
+
+    // Announcements
+    const defaultAnnouncements = [
+      "Team lunch on Friday at 1pm in the main cafeteria.",
+      "Reminder: Submit weekly reports by Thursday 5pm.",
+      "Fire drill scheduled for next Monday at 10am."
+    ];
     function getAnnouncements() {
       return JSON.parse(localStorage.getItem('announcements') || JSON.stringify(defaultAnnouncements));
     }
     function setAnnouncements(list) {
       localStorage.setItem('announcements', JSON.stringify(list));
     }
+
+    // Admin code
+    function getAdminCode() {
+      return localStorage.getItem('adminCode') || "1234";
+    }
+    function setAdminCode(newCode) {
+      localStorage.setItem('adminCode', newCode);
+    }
+
+    // Hire Submissions
     function getSubmissions() {
       return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
     }
@@ -310,6 +242,7 @@
       setSubmissions(subs);
     }
 
+    // ============ Shifts Section ============
     function renderShiftSquares() {
       const workers = getWorkers();
       const shiftSquares = document.getElementById('shift-squares');
@@ -336,6 +269,8 @@
         </ul>
       `;
     }
+
+    // ============ Announcements Section ============
     function renderAnnouncements() {
       const list = getAnnouncements();
       const annList = document.getElementById('announcements-list');
@@ -346,6 +281,8 @@
         annList.appendChild(li);
       });
     }
+
+    // ============ Admin Announcements ============
     function renderAdminAnnouncements() {
       const list = getAnnouncements();
       const annList = document.getElementById('admin-announcements-list');
@@ -359,6 +296,8 @@
         annList.appendChild(li);
       });
     }
+
+    // ============ Admin Workers ============
     function renderAdminWorkers() {
       const workers = getWorkers();
       const div = document.getElementById('admin-workers-list');
@@ -382,6 +321,8 @@
         div.appendChild(workerDiv);
       });
     }
+
+    // ============ Admin Submissions ============
     function renderAdminSubmissions() {
       const subs = getSubmissions();
       const list = document.getElementById('submissions-list');
@@ -411,54 +352,7 @@
       `).join("");
     }
 
-    // --- Navigation ---
-    function hideAllDetails() {
-      document.getElementById('shifts-details').classList.add('hidden');
-      document.getElementById('announcements-details').classList.add('hidden');
-      document.getElementById('hire-details').classList.add('hidden');
-      document.getElementById('admin-details').classList.add('hidden');
-      document.getElementById('calendar-details').classList.add('hidden');
-      document.getElementById('shifts-square').classList.remove('selected');
-      document.getElementById('announcements-square').classList.remove('selected');
-      document.getElementById('hire-square').classList.remove('selected');
-      document.getElementById('admin-square').classList.remove('selected');
-      document.getElementById('calendar-square').classList.remove('selected');
-    }
-    document.getElementById('shifts-square').addEventListener('click', () => {
-      hideAllDetails();
-      document.getElementById('shifts-details').classList.remove('hidden');
-      document.getElementById('shifts-square').classList.add('selected');
-      renderShiftSquares();
-      document.getElementById('profile-details').innerHTML = `<h3>Click a profile to see shift details</h3>`;
-    });
-    document.getElementById('announcements-square').addEventListener('click', () => {
-      hideAllDetails();
-      document.getElementById('announcements-details').classList.remove('hidden');
-      document.getElementById('announcements-square').classList.add('selected');
-      renderAnnouncements();
-    });
-    document.getElementById('hire-square').addEventListener('click', () => {
-      hideAllDetails();
-      document.getElementById('hire-details').classList.remove('hidden');
-      document.getElementById('hire-square').classList.add('selected');
-    });
-    document.getElementById('admin-square').addEventListener('click', () => {
-      hideAllDetails();
-      document.getElementById('admin-details').classList.remove('hidden');
-      document.getElementById('admin-square').classList.add('selected');
-      document.getElementById('admin-login').classList.remove('hidden');
-      document.getElementById('admin-panel').classList.add('hidden');
-      document.getElementById('admin-login-message').textContent = '';
-      document.getElementById('admin-code').value = '';
-    });
-    document.getElementById('calendar-square').addEventListener('click', () => {
-      hideAllDetails();
-      document.getElementById('calendar-details').classList.remove('hidden');
-      document.getElementById('calendar-square').classList.add('selected');
-      renderCalendar();
-    });
-
-    // --- Hire form submission ---
+    // ============ Hire Form ============
     document.getElementById('hire-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const form = e.target;
@@ -475,7 +369,7 @@
       }, 3000);
     });
 
-    // --- Admin login and panel ---
+    // ============ Admin Panel ==============
     document.getElementById('admin-login-btn').addEventListener('click', function() {
       const code = document.getElementById('admin-code').value;
       if(code === getAdminCode()) {
@@ -489,7 +383,7 @@
       }
     });
 
-    // --- Change admin code ---
+    // Change admin code
     document.getElementById('change-admin-code-btn').addEventListener('click', function() {
       const newCode = document.getElementById('new-admin-code').value.trim();
       if(newCode.length < 3) {
@@ -504,7 +398,7 @@
       setTimeout(() => document.getElementById('admin-code-message').textContent = "", 3000);
     });
 
-    // --- Add Worker ---
+    // Add Worker
     document.getElementById('add-worker-btn').addEventListener('click', function() {
       document.getElementById('add-worker-form').classList.remove('hidden');
       document.getElementById('add-worker-btn').classList.add('hidden');
@@ -530,7 +424,7 @@
       document.getElementById('add-worker-btn').classList.remove('hidden');
     });
 
-    // --- Edit/Delete Workers ---
+    // Edit/Delete Workers
     document.getElementById('admin-workers-list').addEventListener('click', function(e) {
       if(e.target.classList.contains('edit-worker-btn')) {
         const idx = +e.target.dataset.idx;
@@ -565,7 +459,7 @@
       }
     });
 
-    // --- Admin Announcements ---
+    // Admin Announcements
     document.getElementById('admin-add-announcement-btn').addEventListener('click', function() {
       const val = document.getElementById('admin-new-announcement').value.trim();
       if(!val) return;
@@ -598,7 +492,7 @@
       }
     }, true);
 
-    // --- Admin Submissions Delete ---
+    // Admin Submissions Delete
     document.getElementById('submissions-list').addEventListener('click', function(e) {
       if(e.target.classList.contains('delete-submission-btn')) {
         const idx = +e.target.dataset.idx;
@@ -611,7 +505,145 @@
       }
     });
 
-    // --- Initial Render ---
+    // ============ Calendar Logic ============
+    let calendarEvents = [
+      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
+      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
+      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
+      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
+      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
+      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
+    ];
+    const HOUR_START = 6, HOUR_END = 21;
+    let weekStartDate = getMonday(new Date());
+
+    function getMonday(d) {
+      d = new Date(d);
+      let day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(d.setDate(diff));
+    }
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+    function formatWeekLabel(start) {
+      const end = addDays(start, 6);
+      const opts = { month: "short", day: "numeric" };
+      return `${start.toLocaleDateString(undefined, opts)} - ${end.toLocaleDateString(undefined, opts)}`;
+    }
+    function renderCalendarGoogleStyle() {
+      const grid = document.getElementById("calendar-grid");
+      grid.innerHTML = "";
+
+      // Header Row
+      const headerRow = document.createElement("div");
+      headerRow.className = "cal-row cal-header";
+      headerRow.innerHTML = `<div class="cal-cell cal-time-header"></div>`;
+      for (let i = 0; i < 7; i++) {
+        let d = addDays(weekStartDate, i);
+        const opts = { weekday: "short", month: "short", day: "numeric" };
+        headerRow.innerHTML += `<div class="cal-cell cal-day-header">${d.toLocaleDateString(undefined, opts)}</div>`;
+      }
+      grid.appendChild(headerRow);
+
+      // Main rows (each hour)
+      for (let hour = HOUR_START; hour < HOUR_END; hour++) {
+        const row = document.createElement("div");
+        row.className = "cal-row";
+        // Time label
+        const ampm = hour === 0 ? "12am" : hour < 12 ? hour + "am" : (hour === 12 ? "12pm" : (hour - 12) + "pm");
+        row.innerHTML = `<div class="cal-cell cal-time">${ampm}</div>`;
+        // Day cells
+        for (let day = 0; day < 7; day++) {
+          row.innerHTML += `<div class="cal-cell cal-slot" data-day="${day}" data-hour="${hour}"></div>`;
+        }
+        grid.appendChild(row);
+      }
+
+      // Render events as Google-style blocks
+      calendarEvents.forEach(ev => {
+        let dayIdx = ev.day;
+        let startRow = Math.floor(ev.start) - HOUR_START + 1; // +1 for header
+        let endRow = Math.ceil(ev.end) - HOUR_START + 1;
+        if (startRow < 1 || startRow > (HOUR_END - HOUR_START)) return;
+        const gridRows = grid.querySelectorAll(".cal-row");
+        const topCell = gridRows[startRow]?.querySelector(`.cal-slot[data-day="${dayIdx}"]`);
+        if (!topCell) return;
+        const eventDiv = document.createElement("div");
+        eventDiv.className = "cal-event-block";
+        eventDiv.style.background = ev.color;
+        eventDiv.style.top = ((ev.start % 1) * 40) + "px";
+        eventDiv.style.height = ((ev.end - ev.start) * 40 - 3) + "px";
+        eventDiv.textContent = ev.title;
+        topCell.style.position = "relative";
+        eventDiv.style.position = "absolute";
+        eventDiv.style.left = "7px";
+        eventDiv.style.right = "7px";
+        eventDiv.style.zIndex = 2;
+        eventDiv.style.display = "flex";
+        eventDiv.style.alignItems = "center";
+        eventDiv.style.paddingLeft = "7px";
+        topCell.appendChild(eventDiv);
+      });
+
+      document.getElementById("calendar-week-label").textContent = formatWeekLabel(weekStartDate);
+    }
+
+    // ============ Navigation ============
+    function hideAllDetails() {
+      ["shifts-details", "announcements-details", "hire-details", "admin-details", "calendar-details"].forEach(id => {
+        var e = document.getElementById(id);
+        if(e) e.classList.add("hidden");
+      });
+      ["shifts-square", "announcements-square", "hire-square", "admin-square", "calendar-square"].forEach(id => {
+        var e = document.getElementById(id);
+        if(e) e.classList.remove("selected");
+      });
+    }
+    document.getElementById('shifts-square').onclick = function() {
+      hideAllDetails(); document.getElementById('shifts-details').classList.remove('hidden');
+      this.classList.add('selected');
+      renderShiftSquares();
+      document.getElementById('profile-details').innerHTML = `<h3>Click a profile to see shift details</h3>`;
+    };
+    document.getElementById('announcements-square').onclick = function() {
+      hideAllDetails(); document.getElementById('announcements-details').classList.remove('hidden');
+      this.classList.add('selected');
+      renderAnnouncements();
+    };
+    document.getElementById('hire-square').onclick = function() {
+      hideAllDetails(); document.getElementById('hire-details').classList.remove('hidden');
+      this.classList.add('selected');
+    };
+    document.getElementById('admin-square').onclick = function() {
+      hideAllDetails(); document.getElementById('admin-details').classList.remove('hidden');
+      this.classList.add('selected');
+      document.getElementById('admin-login').classList.remove('hidden');
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('admin-login-message').textContent = '';
+      document.getElementById('admin-code').value = '';
+    };
+    document.getElementById('calendar-square').onclick = function() {
+      hideAllDetails();
+      document.getElementById('calendar-details').classList.remove('hidden');
+      this.classList.add('selected');
+      renderCalendarGoogleStyle();
+    };
+    document.getElementById('calendar-today-btn').onclick = function () {
+      weekStartDate = getMonday(new Date());
+      renderCalendarGoogleStyle();
+    };
+    document.getElementById('calendar-prev-btn').onclick = function () {
+      weekStartDate = addDays(weekStartDate, -7);
+      renderCalendarGoogleStyle();
+    };
+    document.getElementById('calendar-next-btn').onclick = function () {
+      weekStartDate = addDays(weekStartDate, 7);
+      renderCalendarGoogleStyle();
+    };
+
+    // ============ Initial Render ============
     renderShiftSquares();
     renderAnnouncements();
   </script>
