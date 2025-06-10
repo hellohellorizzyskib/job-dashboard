@@ -158,6 +158,34 @@
           <button id="admin-add-announcement-btn">Add</button>
         </div>
         <div class="admin-section">
+          <h3>Manage Calendar</h3>
+          <div id="admin-calendar-list"></div>
+          <form id="admin-add-calendar-form" class="admin-cal-form">
+            <label>Title: <input type="text" id="admin-cal-title" required></label>
+            <label>Day:
+              <select id="admin-cal-day" required>
+                <option value="0">Monday</option>
+                <option value="1">Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+              </select>
+            </label>
+            <label>Start Time:
+              <input type="time" id="admin-cal-start" min="06:00" max="21:00" required>
+            </label>
+            <label>End Time:
+              <input type="time" id="admin-cal-end" min="06:00" max="21:00" required>
+            </label>
+            <label>Color:
+              <input type="color" id="admin-cal-color" value="#ffb347" required>
+            </label>
+            <button type="submit">Add Event</button>
+          </form>
+        </div>
+        <div class="admin-section">
           <h3>Manage Submissions</h3>
           <div id="submissions-section">
             <div id="submissions-list"></div>
@@ -229,7 +257,7 @@
       localStorage.setItem('adminCode', newCode);
     }
 
-    // Hire Submissions
+    // Submissions
     function getSubmissions() {
       return JSON.parse(localStorage.getItem('hireSubmissions') || '[]');
     }
@@ -240,6 +268,22 @@
       const subs = getSubmissions();
       subs.push(data);
       setSubmissions(subs);
+    }
+
+    // Calendar events
+    const defaultCalendarEvents = [
+      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
+      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
+      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
+      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
+      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
+      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
+    ];
+    function getCalendarEvents() {
+      return JSON.parse(localStorage.getItem('calendarEvents') || JSON.stringify(defaultCalendarEvents));
+    }
+    function setCalendarEvents(events) {
+      localStorage.setItem('calendarEvents', JSON.stringify(events));
     }
 
     // ============ Shifts Section ============
@@ -377,6 +421,7 @@
         document.getElementById('admin-panel').classList.remove('hidden');
         renderAdminWorkers();
         renderAdminAnnouncements();
+        renderAdminCalendar();
         renderAdminSubmissions();
       } else {
         document.getElementById('admin-login-message').textContent = "Incorrect code.";
@@ -506,14 +551,7 @@
     });
 
     // ============ Calendar Logic ============
-    let calendarEvents = [
-      { title: "John Shift", day: 0, start: 9, end: 17, color: "#ffb347" },
-      { title: "Jane Shift", day: 1, start: 13, end: 21, color: "#71c7ec" },
-      { title: "Bob Shift", day: 2, start: 6, end: 14, color: "#8de7b5" },
-      { title: "Team Lunch", day: 4, start: 13, end: 14, color: "#c3a3fc" },
-      { title: "Fire Drill", day: 0, start: 10, end: 11, color: "#ff9800" },
-      { title: "Manager Meeting", day: 3, start: 15, end: 16.5, color: "#7e46c5" }
-    ];
+    let calendarEvents = getCalendarEvents();
     const HOUR_START = 6, HOUR_END = 21;
     let weekStartDate = getMonday(new Date());
 
@@ -533,6 +571,7 @@
       return `${start.toLocaleDateString(undefined, opts)} - ${end.toLocaleDateString(undefined, opts)}`;
     }
     function renderCalendarGoogleStyle() {
+      calendarEvents = getCalendarEvents();
       const grid = document.getElementById("calendar-grid");
       grid.innerHTML = "";
 
@@ -588,6 +627,121 @@
       });
 
       document.getElementById("calendar-week-label").textContent = formatWeekLabel(weekStartDate);
+    }
+
+    // Admin Calendar Management
+    function renderAdminCalendar() {
+      calendarEvents = getCalendarEvents();
+      const listDiv = document.getElementById('admin-calendar-list');
+      listDiv.innerHTML = '';
+      if (calendarEvents.length === 0) {
+        listDiv.innerHTML = '<em>No events scheduled.</em>';
+        return;
+      }
+      calendarEvents.forEach((ev, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = "admin-cal-event";
+        wrap.style.borderLeft = `7px solid ${ev.color}`;
+        wrap.innerHTML = `
+          <b>${ev.title}</b>
+          <span class="admin-cal-desc">(${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][ev.day]} ${toTimeStr(ev.start)}-${toTimeStr(ev.end)})</span>
+          <button class="admin-cal-edit-btn" data-idx="${idx}">Edit</button>
+          <button class="admin-cal-delete-btn" data-idx="${idx}">Delete</button>
+          <div class="admin-cal-edit-form hidden" id="admin-cal-edit-form-${idx}">
+            <label>Title: <input type="text" value="${ev.title}" class="edit-cal-title"></label>
+            <label>Day:
+              <select class="edit-cal-day">
+                <option value="0" ${ev.day===0?'selected':''}>Monday</option>
+                <option value="1" ${ev.day===1?'selected':''}>Tuesday</option>
+                <option value="2" ${ev.day===2?'selected':''}>Wednesday</option>
+                <option value="3" ${ev.day===3?'selected':''}>Thursday</option>
+                <option value="4" ${ev.day===4?'selected':''}>Friday</option>
+                <option value="5" ${ev.day===5?'selected':''}>Saturday</option>
+                <option value="6" ${ev.day===6?'selected':''}>Sunday</option>
+              </select>
+            </label>
+            <label>Start Time:
+              <input type="time" value="${fromHour(ev.start)}" class="edit-cal-start">
+            </label>
+            <label>End Time:
+              <input type="time" value="${fromHour(ev.end)}" class="edit-cal-end">
+            </label>
+            <label>Color:
+              <input type="color" value="${ev.color}" class="edit-cal-color">
+            </label>
+            <button class="save-cal-edit-btn" data-idx="${idx}">Save</button>
+            <button class="cancel-cal-edit-btn" data-idx="${idx}">Cancel</button>
+          </div>
+        `;
+        listDiv.appendChild(wrap);
+      });
+    }
+    function toTimeStr(h) {
+      let hr = Math.floor(h);
+      let min = Math.round((h % 1) * 60);
+      let s = hr === 0 ? "12am" : hr < 12 ? hr+"am" : hr === 12 ? "12pm" : (hr-12)+"pm";
+      if(min>0) s = s.replace(/am|pm/,'') + ":" + (min<10?"0":"") + min + s.slice(-2);
+      return s;
+    }
+    function fromHour(val) {
+      let hr = Math.floor(val);
+      let min = Math.round((val % 1) * 60);
+      return (hr<10?"0":"") + hr + ":" + (min<10?"0":"") + min;
+    }
+    document.getElementById('admin-calendar-list').addEventListener('click', function(e) {
+      if (e.target.classList.contains('admin-cal-edit-btn')) {
+        const idx = +e.target.dataset.idx;
+        document.getElementById(`admin-cal-edit-form-${idx}`).classList.remove('hidden');
+      }
+      if (e.target.classList.contains('cancel-cal-edit-btn')) {
+        const idx = +e.target.dataset.idx;
+        document.getElementById(`admin-cal-edit-form-${idx}`).classList.add('hidden');
+      }
+      if (e.target.classList.contains('save-cal-edit-btn')) {
+        const idx = +e.target.dataset.idx;
+        const form = document.getElementById(`admin-cal-edit-form-${idx}`);
+        const title = form.querySelector('.edit-cal-title').value.trim();
+        const day = +form.querySelector('.edit-cal-day').value;
+        const start = timeToHour(form.querySelector('.edit-cal-start').value);
+        const end = timeToHour(form.querySelector('.edit-cal-end').value);
+        const color = form.querySelector('.edit-cal-color').value;
+        if (!title || end <= start) return;
+        calendarEvents = getCalendarEvents();
+        calendarEvents[idx] = { title, day, start, end, color };
+        setCalendarEvents(calendarEvents);
+        renderAdminCalendar();
+        renderCalendarGoogleStyle();
+      }
+      if (e.target.classList.contains('admin-cal-delete-btn')) {
+        const idx = +e.target.dataset.idx;
+        if (confirm("Delete this event?")) {
+          calendarEvents = getCalendarEvents();
+          calendarEvents.splice(idx, 1);
+          setCalendarEvents(calendarEvents);
+          renderAdminCalendar();
+          renderCalendarGoogleStyle();
+        }
+      }
+    });
+    document.getElementById('admin-add-calendar-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const title = document.getElementById('admin-cal-title').value.trim();
+      const day = +document.getElementById('admin-cal-day').value;
+      const start = timeToHour(document.getElementById('admin-cal-start').value);
+      const end = timeToHour(document.getElementById('admin-cal-end').value);
+      const color = document.getElementById('admin-cal-color').value;
+      if (!title || end <= start) return;
+      calendarEvents = getCalendarEvents();
+      calendarEvents.push({ title, day, start, end, color });
+      setCalendarEvents(calendarEvents);
+      renderAdminCalendar();
+      renderCalendarGoogleStyle();
+      e.target.reset();
+    });
+    function timeToHour(str) {
+      if (!str) return 0;
+      const [h, m] = str.split(':').map(Number);
+      return h + m/60;
     }
 
     // ============ Navigation ============
